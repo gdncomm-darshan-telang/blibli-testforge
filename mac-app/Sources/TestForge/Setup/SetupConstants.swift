@@ -8,8 +8,10 @@ enum SetupConstants {
 	}
 
 	enum Repo {
-		static let dashboardPath = "tools/qa-dashboard"
-		static let serverScript = "server.js"
+		static let dashboardPath = "server"
+		static let serverScript = "start.sh"
+		static let appProjectFolder = "BlibliMobile-iOS"
+		static let workspaceExtension = "xcworkspace"
 		static let searchDepth = 6
 	}
 
@@ -32,5 +34,6 @@ enum SetupConstants {
 		static let toolRowPrefix = "QAW_Setup_Tool_"
 		static let toolFixPrefix = "QAW_Setup_Fix_"
 		static let changeRepoButton = "QAW_Settings_ChangeRepo"
+		static let chooseAppRepoButton = "QAW_Setup_ChooseAppRepo"
 	}
 }

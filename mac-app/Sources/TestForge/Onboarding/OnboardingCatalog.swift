@@ -72,7 +72,7 @@ enum OnboardingCatalog {
 			OnboardingCard(
 				symbolName: "server.rack",
 				title: String(localized: "QA server"),
-				text: String(localized: "A small local server in your repo (tools/qa-dashboard) that the app starts. It keeps runs, results and mocks.")
+				text: String(localized: "A small local server (server/ in your TestForge checkout) that the app starts. It keeps runs, results and mocks.")
 			),
 			OnboardingCard(
 				symbolName: "iphone.gen3",

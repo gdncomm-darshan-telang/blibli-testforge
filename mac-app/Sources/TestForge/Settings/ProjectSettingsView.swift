@@ -20,7 +20,7 @@ struct ProjectSettingsView<Setup: SetupPresenting>: View {
 					.font(.callout)
 					.foregroundStyle(.red)
 			}
-			Text("TestForge reopens with the repo you choose. QA_DASHBOARD_DIR, when set, still wins.")
+			Text("TestForge reopens with the checkout you choose. QA_DASHBOARD_DIR and QA_PROJECT_DIR, when set, still win.")
 				.font(.callout)
 				.foregroundStyle(.secondary)
 		}

@@ -10,6 +10,7 @@ protocol TestForgeOpening {
 
 enum TestForgeSettingsKey {
 	static let dashboardDirectory = "dashboardDirectory"
+	static let projectDirectory = "projectDirectory"
 	static let appearance = "appearance"
 	static let showsMenuBarItem = "showsMenuBarItem"
 	static let notifiesOnFinish = "notifiesOnFinish"
@@ -102,7 +103,8 @@ extension TestForgeOpening {
 		return TestForgeViewModel(services: services)
 	}
 
-	/// Folder order: `QA_DASHBOARD_DIR`, the repo chosen in Setup, then the `tools/qa-dashboard` beside this app in the repo.
+	/// Server folder order: `QA_DASHBOARD_DIR`, the checkout chosen in Setup, then the `server/` of the checkout this app was built in.
+	/// The app under test is `QA_PROJECT_DIR`, else the clone chosen in Setup.
 	/// Nil for an app installed from a DMG before Setup ran (D-132).
 	func resolveServerLocation(
 		environment: [String: String] = ProcessInfo.processInfo.environment,
@@ -110,14 +112,16 @@ extension TestForgeOpening {
 	) -> ServerLocation? {
 		let baseURL = serverBaseURL(environment: environment)
 		let explicitPath = environment["QA_DASHBOARD_DIR"] ?? defaults.string(forKey: TestForgeSettingsKey.dashboardDirectory)
+		let projectPath = environment["QA_PROJECT_DIR"] ?? defaults.string(forKey: TestForgeSettingsKey.projectDirectory)
+		let projectDirectory = projectPath.map { URL(fileURLWithPath: $0, isDirectory: true) }
 		if let explicitPath {
 			let directory = URL(fileURLWithPath: explicitPath, isDirectory: true)
-			return ServerLocation(dashboardDirectory: directory, baseURL: baseURL)
+			return ServerLocation(dashboardDirectory: directory, baseURL: baseURL, projectDirectory: projectDirectory)
 		}
 		guard let directory = findDashboardDirectory(startingAt: Bundle.main.bundleURL) else {
 			return nil
 		}
-		return ServerLocation(dashboardDirectory: directory, baseURL: baseURL)
+		return ServerLocation(dashboardDirectory: directory, baseURL: baseURL, projectDirectory: projectDirectory)
 	}
 
 	/// Only Setup shows while this is in use, so nothing starts from the app's own folder.
@@ -143,13 +147,10 @@ extension TestForgeOpening {
 	private func findDashboardDirectory(startingAt startURL: URL, fileManager: FileManager = .default) -> URL? {
 		var candidate = startURL
 		for _ in 0..<8 {
-			let dashboardURL = candidate.appendingPathComponent("tools/qa-dashboard", isDirectory: true)
-			let siblingURL = candidate.appendingPathComponent("qa-dashboard", isDirectory: true)
-			for directory in [dashboardURL, siblingURL] {
-				let serverScript = directory.appendingPathComponent("server.js")
-				if fileManager.fileExists(atPath: serverScript.path) {
-					return directory
-				}
+			let serverDirectory = candidate.appendingPathComponent(SetupConstants.Repo.dashboardPath, isDirectory: true)
+			let startScript = serverDirectory.appendingPathComponent(SetupConstants.Repo.serverScript)
+			if fileManager.fileExists(atPath: startScript.path) {
+				return serverDirectory
 			}
 			candidate = candidate.deletingLastPathComponent()
 		}

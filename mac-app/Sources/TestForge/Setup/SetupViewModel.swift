@@ -3,11 +3,16 @@ import Foundation
 @MainActor
 protocol SetupPresenting: ObservableObject {
 	var repoState: SetupRepoState { get }
+
+	/// The iOS app clone under test; `.valid`'s `dashboard` holds its `BlibliMobile-iOS` folder.
+	var appRepoState: SetupRepoState { get }
+
 	var toolRows: [SetupToolRowModel] { get }
 	var message: String? { get }
 	var canContinue: Bool { get }
 
 	func chooseRepo()
+	func chooseAppRepo()
 
 	/// Settings › Project: picks a repo and, when it holds the QA server, reopens the app on it.
 	func changeRepo()
@@ -30,6 +35,7 @@ struct SetupDependencies {
 @MainActor
 final class SetupViewModel: SetupPresenting {
 	@Published private(set) var repoState: SetupRepoState = .notChosen
+	@Published private(set) var appRepoState: SetupRepoState = .notChosen
 	@Published private(set) var toolRows: [SetupToolRowModel]
 	@Published private(set) var message: String?
 
@@ -37,7 +43,9 @@ final class SetupViewModel: SetupPresenting {
 	private var checkTask: Task<Void, Never>?
 
 	var canContinue: Bool {
-		guard case .valid = repoState else {
+		guard case .valid = repoState,
+			case .valid = appRepoState
+		else {
 			return false
 		}
 		return toolRows.allSatisfy { row in
@@ -55,6 +63,11 @@ final class SetupViewModel: SetupPresenting {
 			let repo = dependencies.resolver.repoRoot(containing: currentDashboard) {
 			repoState = .valid(repo: repo, dashboard: dependencies.resolver.dashboardDirectory(inRepo: repo))
 		}
+		let savedProject = dependencies.defaults.string(forKey: TestForgeSettingsKey.projectDirectory)
+		if let savedProject {
+			let project = URL(fileURLWithPath: savedProject, isDirectory: true)
+			appRepoState = .valid(repo: project.deletingLastPathComponent(), dashboard: project)
+		}
 	}
 
 	deinit {
@@ -64,6 +77,12 @@ final class SetupViewModel: SetupPresenting {
 	func chooseRepo() {
 		Task { [weak self] in
 			_ = await self?.pickRepo()
+		}
+	}
+
+	func chooseAppRepo() {
+		Task { [weak self] in
+			await self?.pickAppRepo()
 		}
 	}
 
@@ -112,11 +131,25 @@ final class SetupViewModel: SetupPresenting {
 
 	func continueToTestForge() {
 		guard canContinue,
-			case .valid(_, let dashboard) = repoState
+			case .valid(_, let dashboard) = repoState,
+			case .valid(_, let project) = appRepoState
 		else {
 			return
 		}
+		dependencies.defaults.set(project.path, forKey: TestForgeSettingsKey.projectDirectory)
 		saveAndRelaunch(dashboard: dashboard)
+	}
+
+	private func pickAppRepo() async {
+		let prompt = String(localized: "Use this app clone")
+		guard let folder = await dependencies.desktop.chooseFolder(prompt: prompt, startingAt: nil) else {
+			return
+		}
+		guard let project = dependencies.resolver.appProjectDirectory(containing: folder) else {
+			appRepoState = .invalid(folder: folder)
+			return
+		}
+		appRepoState = .valid(repo: project.deletingLastPathComponent(), dashboard: project)
 	}
 
 	/// False when the person cancels the folder panel.
@@ -138,7 +171,7 @@ final class SetupViewModel: SetupPresenting {
 			case .valid(_, let dashboard):
 				saveAndRelaunch(dashboard: dashboard)
 			case .invalid(let folder):
-				message = String(localized: "\(folder.lastPathComponent) has no tools/qa-dashboard — choose the repo's top folder")
+				message = String(localized: "\(folder.lastPathComponent) has no server/start.sh — choose the TestForge checkout's top folder")
 			case .notChosen:
 				break
 		}

@@ -18,7 +18,7 @@ open "build/TestForge.app"
 You can also open `Package.swift` in Xcode and run the `TestForge` scheme, or use `swift run` for a debug launch.
 
 - **Needs:** macOS 14 or later, the Swift 5.10+ toolchain from Xcode, and Node for the server. `start.sh` finds Node the same way the web launcher does.
-- **Location:** the app searches the folders above itself for `tools/qa-dashboard`. Installed anywhere else (from the DMG), it shows **Setup** first: choose your clone of the repo, fix any red tool check, **Continue** (the app reopens on that repo). Settings › Project › **Change repo…** switches later.
+- **Location:** the app searches the folders above itself for `server/start.sh`. Installed anywhere else (from the DMG), it shows **Setup** first: choose your blibli-testforge clone and your BlibliIOSApp clone, fix any red tool check, **Continue** (the app reopens on them). Settings › Project › **Change repo…** switches the checkout later.
 
 ## What R2 does
 
@@ -58,7 +58,8 @@ You can also open `Package.swift` in Xcode and run the `TestForge` scheme, or us
 
 | Variable | Default | Use |
 |---|---|---|
-| `QA_DASHBOARD_DIR` | found by searching the folders above the app | The dashboard folder to run |
+| `QA_DASHBOARD_DIR` | found by searching the folders above the app | The `server/` folder to run |
+| `QA_PROJECT_DIR` | the app clone chosen in Setup | The app under test: the `BlibliMobile-iOS` folder with the `.xcworkspace`. Passed to the server |
 | `QA_DASHBOARD_PORT` | `4545` | The port to look for, or to start the server on |
 
 To try the app without touching the live server, run a copy of the dashboard on another port:
