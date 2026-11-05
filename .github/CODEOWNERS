@@ -1,0 +1,8 @@
+# Every path needs a code owner's review. Narrow per area as module owners join.
+*             @gdncomm-darshan-telang
+/plugin/      @gdncomm-darshan-telang
+/mac-app/     @gdncomm-darshan-telang
+/server/      @gdncomm-darshan-telang
+/docs/        @gdncomm-darshan-telang
+/.github/     @gdncomm-darshan-telang
+/.githooks/   @gdncomm-darshan-telang

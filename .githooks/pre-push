@@ -1,0 +1,12 @@
+#!/bin/bash
+# Refuses a push to main: changes reach main through a PR (see CONTRIBUTING.md).
+# Enable once per clone:  git config core.hooksPath .githooks
+# Bootstrap override:     ALLOW_MAIN_PUSH=1 git push
+set -euo pipefail
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+	if [ "$remote_ref" = "refs/heads/main" ] && [ "${ALLOW_MAIN_PUSH:-0}" != "1" ]; then
+		echo "Push to main refused. Push a <name>/<type>/<topic> branch and open a PR." >&2
+		exit 1
+	fi
+done

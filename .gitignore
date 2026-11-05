@@ -60,3 +60,41 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# TestForge
+#
+# Local state, secrets and build output never go in git.
+.env
+.env.*
+!.env.example
+.data/
+.skip-swiftlint
+*.p12
+*.pem
+*.mobileprovision
+
+# Mac app (Swift package)
+.build/
+.swiftpm/
+build/
+*.dmg
+*.app/
+
+# Server / plugin (Node)
+node_modules/
+npm-debug.log*
+coverage/
+
+# Python helpers
+__pycache__/
+*.pyc
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Claude Code: personal settings stay local
+.claude/settings.local.json
+.claude/worktrees/
