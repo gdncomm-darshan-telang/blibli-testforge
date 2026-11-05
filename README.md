@@ -27,7 +27,7 @@ macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access
 
 ## Working in this repo
 
-Branches, commits, PRs and releases: see [CONTRIBUTING.md](CONTRIBUTING.md). Short version: `main` is always installable, work happens on `<name>/<type>/<topic>` branches, everything reaches `main` through a squash-merged PR.
+Branches, commits, PRs and releases: see [CONTRIBUTING.md](CONTRIBUTING.md). Short version: `master` is always installable, work happens on `<name>/<type>/<topic>` branches, everything reaches `master` through a squash-merged PR.
 
 ## Secrets
 

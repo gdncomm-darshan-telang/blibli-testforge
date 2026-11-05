@@ -2,25 +2,25 @@
 
 ## Branching strategy: trunk plus short-lived branches
 
-`main` is the only long-lived branch. It is always installable: the plugin marketplace and `setup.sh` point at it, so a broken `main` breaks every developer's TestForge.
+`master` is the only long-lived branch. It is always installable: the plugin marketplace and `setup.sh` point at it, so a broken `master` breaks every developer's TestForge.
 
 | Branch | Pattern | Rule |
 |---|---|---|
-| Trunk | `main` | Never push directly. Change it only by PR. |
-| Work | `<firstname>/<type>/<topic>` | Branch from `main`, keep it under a few days, delete after merge. |
-| Hotfix on an old release | `release/<major>.<minor>` | Only when a shipped tag needs a fix and `main` has moved on. Branch from the tag, fix, tag `v<major>.<minor>.<patch+1>`, then port the fix to `main`. |
+| Trunk | `master` | Never push directly. Change it only by PR. |
+| Work | `<firstname>/<type>/<topic>` | Branch from `master`, keep it under a few days, delete after merge. |
+| Hotfix on an old release | `release/<major>.<minor>` | Only when a shipped tag needs a fix and `master` has moved on. Branch from the tag, fix, tag `v<major>.<minor>.<patch+1>`, then port the fix to `master`. |
 
 `<type>` is one of `feature`, `fix`, `chore`, `docs`, `refactor`, `test`. Examples: `darshan/feature/setup-script`, `asha/fix/replay-timeout`.
 
 ### Flow
 
-1. `git switch main && git pull --ff-only`
+1. `git switch master && git pull --ff-only`
 2. `git switch -c <firstname>/<type>/<topic>`
-3. Commit small, push, open a PR into `main`.
+3. Commit small, push, open a PR into `master`.
 4. One approving review (the code owner for the area, see `.github/CODEOWNERS`), CI green when CI exists.
-5. **Squash merge**, delete the branch. The squash title is the commit message on `main`.
+5. **Squash merge**, delete the branch. The squash title is the commit message on `master`.
 
-Rebase your branch on `main` before merging if it is behind. Do not merge `main` into a work branch repeatedly; rebase instead.
+Rebase your branch on `master` before merging if it is behind. Do not merge `master` into a work branch repeatedly; rebase instead.
 
 ## Commits and PR titles
 
@@ -30,7 +30,7 @@ A non-obvious design choice gets a new `D-NNN` entry in `docs/decision.md` in th
 
 ## Releases
 
-Semantic versions, tagged on `main`: `v<major>.<minor>.<patch>`.
+Semantic versions, tagged on `master`: `v<major>.<minor>.<patch>`.
 
 - **Patch**: fixes only.
 - **Minor**: new features, backward compatible with existing recordings and state.
@@ -40,9 +40,12 @@ Releasing is: bump the plugin and app versions, update the changelog, merge, tag
 
 ## Enforcement
 
-The repo is public, so GitHub enforces these on `main`: changes only by PR, 1 approving review, code-owner review, resolved conversations, linear history, no force-push, no deletion. Repo admins can bypass (needed while the owner is the only reviewer), so do not. Merging is squash-only and merged branches are deleted automatically.
+The gdncomm organization rulesets block force-push and deletion on `master`. They do **not** require a PR or a review, so the rest is on us:
 
-The tracked hook is a second guard on your machine. Enable it once per clone: `git config core.hooksPath .githooks`. It refuses a push to `main` (override only for a bootstrap with `ALLOW_MAIN_PUSH=1`).
+- Never push to `master` directly. Open a PR; one approving review from a code owner before merge; resolve all conversations; squash merge only (the repo allows nothing else).
+- Enable the tracked hook once per clone: `git config core.hooksPath .githooks`. It refuses a push to `master` (override only for a bootstrap with `ALLOW_MASTER_PUSH=1`).
+
+If a repo admin adds a branch rule, require: PR before merge, 1 approval, code-owner review, resolved conversations, linear history.
 
 ## Secrets
 
