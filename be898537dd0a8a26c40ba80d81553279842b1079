@@ -1,0 +1,31 @@
+CONTRIBUTING.md
+  719bb087b0337a43 1-52
+.github/pull_request_template.md
+  719bb087b0337a43 1-18
+.githooks/pre-push
+  719bb087b0337a43 1-12
+README.md
+  719bb087b0337a43 1-34
+.github/CODEOWNERS
+  719bb087b0337a43 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "be898537dd0a8a26c40ba80d81553279842b1079",
+  "prompts": {
+    "719bb087b0337a43": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a804252-b6dd-4e75-b41f-1c16d579e447",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 124,
+      "total_deletions": 0,
+      "accepted_lines": 124,
+      "overriden_lines": 0
+    }
+  }
+}
