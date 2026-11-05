@@ -1,0 +1,990 @@
+<title>TestForge v3 Prototype</title>
+<style>
+/* Layout: dashboard shell (header · tabs · main + device rail). Test Cases tab = intro, 3 question cards and one Run button; after Run, an automatic progress list, then results. Single dark theme on purpose — it mirrors the product. */
+:root {
+	color-scheme: dark;
+	--bg: #0f1115;
+	--panel: #1a1d24;
+	--panel-2: #20242d;
+	--border: #2a2e37;
+	--text: #e6e8eb;
+	--muted: #8a8f99;
+	--accent: #4f8cff;
+	--ok: #5fd38d;
+	--warn: #f5c768;
+	--danger: #ff5c5c;
+	--info: #7aa7ff;
+	--proto: #c9a7ff;
+	--font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+	--font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 14px; line-height: 1.45; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: var(--accent); color: #fff; border: 1px solid transparent; border-radius: 6px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+button.ghost { background: transparent; border-color: var(--border); color: var(--text); }
+button.danger { background: var(--danger); }
+button.small { padding: 3px 9px; font-size: 0.8rem; }
+button.link { background: none; border: 0; color: var(--info); padding: 0; text-decoration: underline; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+input, select, textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; min-width: 0; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+.muted { color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+/* Prototype controls — visually distinct from the product UI */
+.proto-bar { border-bottom: 1px dashed var(--proto); background: color-mix(in srgb, var(--proto) 8%, var(--bg)); padding-block: 8px; padding-inline: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 0.82rem; }
+.proto-bar strong { color: var(--proto); letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.72rem; }
+.proto-bar button { background: transparent; border: 1px solid color-mix(in srgb, var(--proto) 50%, transparent); color: var(--proto); padding: 2px 9px; font-size: 0.78rem; }
+.proto-bar button[aria-pressed="true"] { background: color-mix(in srgb, var(--proto) 22%, transparent); }
+
+header.app { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 12px; padding-inline: 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+header.app h1 { font-size: 1.05rem; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 2px 9px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); white-space: nowrap; }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.chip.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
+.chip.info { color: var(--info); border-color: color-mix(in srgb, var(--info) 40%, transparent); }
+nav.tabs { display: flex; gap: 2px; padding-inline: 16px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+nav.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 9px 12px; color: var(--muted); white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+.start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.start-card { text-align: left; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; color: var(--text); white-space: normal; }
+.start-card:hover { border-color: var(--accent); }
+.start-card .big { font-size: 1.4rem; }
+.start-card b { font-size: 0.98rem; }
+.needs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.needs:last-child { border-bottom: 0; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; padding-block: 16px; padding-inline: 16px; max-width: 1240px; margin: 0 auto; }
+@media (max-width: 980px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.intro h2 { font-size: 1.35rem; }
+.intro p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+
+/* Question cards */
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card-head h3 { font-size: 1rem; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; background: var(--accent); color: #fff; }
+.card-head .hint { margin-left: auto; font-size: 0.82rem; color: var(--muted); }
+.cta-card { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+button.cta { font-size: 1rem; padding: 10px 18px; font-weight: 600; white-space: normal; text-align: left; }
+
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field > span { font-size: 0.74rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.note { font-size: 0.82rem; color: var(--muted); }
+.callout { border-radius: 8px; padding: 9px 12px; font-size: 0.86rem; display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.callout.warn { background: color-mix(in srgb, var(--warn) 9%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); }
+.callout.error { background: color-mix(in srgb, var(--danger) 9%, transparent); border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
+.callout .grow { min-width: 200px; }
+details.adv summary { cursor: pointer; color: var(--muted); font-size: 0.86rem; }
+details.adv[open] summary { margin-bottom: 8px; }
+
+.seg-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; flex-wrap: wrap; align-self: flex-start; }
+.seg-toggle label { padding: 6px 14px; cursor: pointer; color: var(--muted); font-size: 0.88rem; position: relative; }
+.seg-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.seg-toggle label:has(input:checked) { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--text); }
+.seg-toggle label:has(input:focus-visible) { outline: 2px solid var(--info); outline-offset: -2px; }
+
+.radio-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.radio-card { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; gap: 8px; cursor: pointer; }
+.radio-card:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.radio-card input { margin-top: 3px; }
+
+/* Branch combobox */
+.combo { position: relative; }
+.combo-list { position: absolute; z-index: 10; left: 0; right: 0; top: calc(100% + 4px); background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; max-height: 240px; overflow-y: auto; box-shadow: 0 10px 24px rgb(0 0 0 / 0.35); }
+.combo-item { display: flex; justify-content: space-between; gap: 8px; padding: 7px 10px; cursor: pointer; }
+.combo-item:hover, .combo-item.on { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.tag { font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+
+/* Tables */
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 8px; max-height: 320px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
+th, td { text-align: left; padding: 6px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; background: var(--panel-2); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num-cell { font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.clickable { cursor: pointer; } tr.clickable:hover td { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+
+.badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: 0.03em; white-space: nowrap; }
+.b-PASS { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+.b-FAIL { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.b-BLOCKED { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+.b-EVIDENCE_ONLY, .b-UNDECIDED { background: color-mix(in srgb, var(--info) 18%, transparent); color: var(--info); }
+.b-FLAKY { background: color-mix(in srgb, var(--proto) 20%, transparent); color: var(--proto); }
+.b-QUEUED { background: var(--panel-2); color: var(--muted); }
+.b-RUNNING { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--info); }
+.human { font-size: 0.78rem; }
+.human.accepted { color: var(--ok); } .human.overridden { color: var(--warn); } .human.pending { color: var(--muted); } .human.rerun { color: var(--info); }
+
+/* Automatic progress list */
+.summary-line { display: flex; gap: 8px 14px; align-items: center; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 0.88rem; }
+.stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.stage { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 0 10px; padding-block: 8px; border-bottom: 1px solid var(--border); }
+.stage:last-child { border-bottom: 0; }
+.stage .ic { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; border: 1px solid var(--border); color: var(--muted); }
+.stage.ok .ic, .stage.skip .ic { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: color-mix(in srgb, var(--ok) 15%, transparent); }
+.stage.run .ic { color: var(--info); border-color: var(--accent); }
+.stage.error .ic { color: var(--danger); border-color: var(--danger); background: color-mix(in srgb, var(--danger) 15%, transparent); }
+.stage.needs .ic, .stage.waiting .ic { color: var(--warn); border-color: var(--warn); background: color-mix(in srgb, var(--warn) 15%, transparent); }
+.stage-title { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; padding-top: 2px; }
+.stage-title b { font-weight: 600; }
+.stage.wait .stage-title b { color: var(--muted); font-weight: 500; }
+.stage-note { margin-left: auto; font-size: 0.82rem; color: var(--muted); }
+.stage.ok .stage-note, .stage.skip .stage-note { color: var(--ok); }
+.stage.error .stage-note { color: var(--danger); }
+.stage.needs .stage-note, .stage.waiting .stage-note { color: var(--warn); }
+.stage-body { grid-column: 2; display: flex; flex-direction: column; gap: 8px; margin-top: 8px; min-width: 0; }
+.sub { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 0.84rem; }
+.sub li { display: flex; gap: 8px; align-items: baseline; }
+.sub .s { width: 14px; text-align: center; flex: none; }
+.sub .ok { color: var(--ok); } .sub .wait { color: var(--muted); }
+.spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid color-mix(in srgb, currentColor 22%, transparent); border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -2px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.case-strip { display: flex; gap: 4px; flex-wrap: wrap; }
+.approval { border: 1px solid var(--warn); background: color-mix(in srgb, var(--warn) 8%, transparent); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.approval pre { margin: 0; font-family: var(--font-mono); font-size: 0.78rem; background: var(--bg); padding: 6px 8px; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.summary-nums { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.86rem; }
+.summary-nums b { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.validated { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; border-radius: 8px; background: color-mix(in srgb, var(--ok) 10%, transparent); border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent); }
+
+/* Rail */
+.rail { display: flex; flex-direction: column; gap: 12px; }
+.rail .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.rail h2, .panel-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Drawer & dialogs */
+.overlay { position: fixed; inset: 0; background: rgb(0 0 0 / 0.55); z-index: 20; display: flex; justify-content: flex-end; }
+.drawer { background: var(--panel); width: min(560px, 100%); height: 100%; overflow-y: auto; padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--border); }
+.dialog-wrap { position: fixed; inset: 0; background: rgb(0 0 0 / 0.55); z-index: 30; display: grid; place-items: center; padding: 16px; }
+.dialog { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(520px, 100%); display: flex; flex-direction: column; gap: 10px; max-height: 90vh; overflow-y: auto; }
+.dialog.wide { width: min(780px, 100%); }
+.dialog code, .dialog .mono { overflow-wrap: anywhere; word-break: break-word; }
+.map-step > div:last-child { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 520px) { .map-step { width: 100%; } .map-arrow { display: none; } }
+.map { display: flex; flex-direction: column; gap: 6px; }
+.map-screen { border: 1px dashed var(--border); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+.map-screen-title { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.map-steps { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.map-step { display: flex; gap: 8px; width: 210px; max-width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; font-size: 0.8rem; }
+.map-step.weak { border-color: color-mix(in srgb, var(--warn) 60%, var(--border)); }
+.map-arrow { color: var(--muted); }
+.map-hop { color: var(--muted); font-size: 0.8rem; padding-left: 8px; }
+.mini { position: relative; width: 40px; flex: none; aspect-ratio: 9 / 19.5; border-radius: 7px; border: 2px solid #2c3038; background: linear-gradient(#0084c7 0 9%, #f5f6f8 9%); overflow: hidden; }
+.mini .hl { position: absolute; border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 25%, transparent); border-radius: 3px; }
+.mini.check .hl { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 25%, transparent); }
+.mini.weak .hl { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 25%, transparent); }
+.mini .full { position: absolute; inset: 0; border: 2px dashed var(--info); }
+.ticket { border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--border)); border-radius: 8px; padding: 8px 10px; font-size: 0.86rem; background: color-mix(in srgb, var(--danger) 6%, transparent); }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 520px) { .cmp { grid-template-columns: 1fr; } }
+.cmp > div { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.84rem; }
+.cmp b { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px; }
+.shots { display: flex; gap: 8px; flex-wrap: wrap; }
+.shot { width: 72px; aspect-ratio: 9 / 19.5; border-radius: 10px; border: 2px solid #2c3038; background: linear-gradient(#0084c7 0 12%, #f5f6f8 12% 20%, #ff8a2a 20% 34%, #f5f6f8 34%); }
+.report { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.74rem; white-space: pre-wrap; max-height: 300px; overflow: auto; }
+.toast-area { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 6px; z-index: 40; max-width: calc(100% - 32px); }
+.toast { background: var(--panel-2); border: 1px solid var(--border); border-left: 3px solid var(--ok); border-radius: 8px; padding: 8px 12px; font-size: 0.84rem; box-shadow: 0 8px 20px rgb(0 0 0 / 0.35); }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+</style>
+
+<div class="proto-bar" role="region" aria-label="Prototype controls">
+	<strong>Prototype</strong>
+	<span class="muted">Fake data — nothing runs. Jump to a state:</span>
+	<span id="scenarioButtons" class="row"></span>
+</div>
+
+<header class="app">
+	<h1>TestForge</h1>
+	<div class="chips" id="chips"></div>
+</header>
+<nav class="tabs" aria-label="Tabs" id="tabs" role="tablist"></nav>
+
+<div class="layout">
+	<main id="main"></main>
+	<aside class="rail" id="rail"></aside>
+</div>
+<div id="overlayRoot"></div>
+<div class="toast-area" id="toasts" aria-live="polite"></div>
+
+<script>
+// ---------------------------------------------------------------------------------------------
+// Fake data
+// ---------------------------------------------------------------------------------------------
+const REPOS = ["BlibliIOSApp", "BlibliCommonUI", "blibli-utility"];
+const BRANCHES = [
+	{ name: "develop", when: "2 h ago", sha: "a1b2c3d", title: "Merge release/v14.8.0 into develop" },
+	{ name: "release/v14.9.0", when: "5 h ago", sha: "7c41e90", title: "Bump 14.9.0 (149001)" },
+	{ name: "feature/flashsale-revamp-2026", when: "1 d ago", sha: "e5d0a12", title: "FS revamp: sticky anchor rounding", remoteOnly: true },
+	{ name: "darshan/bugfix/engagement-regression-issue-fixes-2", when: "1 d ago", sha: "3f9b2c1", title: "Fix Flash Sale empty-state Clear All button" },
+	{ name: "release/v14.8.0", when: "6 d ago", sha: "0aa4f77", title: "Hotfix: promo banner height" },
+	{ name: "master", when: "9 d ago", sha: "51c2d08", title: "Release 14.8.0" },
+];
+const LOCALS = [
+	{ id: "poc", name: "BlibliIOSApp-POC", path: "~/Projects/Live/BlibliIOSApp-POC", branch: "darshan/innovation/qa-mocker", sha: "1107d7f", changes: 4, unpushed: 2 },
+	{ id: "live", name: "BlibliIOSApp", path: "~/Projects/Live/BlibliIOSApp", branch: "develop", sha: "a1b2c3d", changes: 0, unpushed: 0 },
+	{ id: "fs", name: "BlibliIOSApp-FS", path: "~/Projects/BlibliIOSApp-FS", branch: "feature/flashsale-revamp-2026", sha: "e5d0a12", changes: 12, unpushed: 0 },
+];
+const CASES = [
+	{ id: "SF-001", scenario: "Hide main schedule tabs when only one schedule is available", expected: "Tabs are not rendered; campaign content shows directly." },
+	{ id: "SF-006", scenario: "Range API fails: hide sub flash sale only", expected: "Sub-FS section hidden; Special Placement still shows." },
+	{ id: "SF-013", scenario: "Campaign banner keeps a 4:1 ratio", expected: "Banner renders at 4:1 on every width." },
+	{ id: "SF-023", scenario: "Default selected schedule is the earliest start", expected: "First tab selected = ascending start time." },
+	{ id: "SF-028", scenario: "Special Placement hidden when data is null", expected: "Section not rendered, no blank gap." },
+	{ id: "SF-034", scenario: "Merchant header tap opens the merchant page", expected: "Tapping the header navigates to merchantUrl." },
+	{ id: "SF-074", scenario: "Merchant card respects Dynamic Type", expected: "Card grows with text size, nothing clipped." },
+	{ id: "SF-084", scenario: "\"Tomorrow\" tab with no hero content", expected: "Tab opens without freezing." },
+	{ id: "SF-090", scenario: "Countdown timer reaches zero", expected: "Schedule moves to ongoing without reload." },
+	{ id: "SF-096", scenario: "Only first N schedules populate products", expected: "Products load for the first 2 schedules only." },
+];
+const RESULTS = {
+	"SF-001": { verdict: "PASS", observed: "No tab bar; campaign content shown directly.", shots: 2, secs: 74 },
+	"SF-006": { verdict: "PASS", observed: "Sub-FS section absent; Special Placement rendered with 2 merchants.", shots: 3, secs: 96 },
+	"SF-013": { verdict: "PASS", observed: "Banner 1320×330 on iPhone 17 Pro Max (4.0:1).", shots: 1, secs: 58 },
+	"SF-023": { verdict: "FAIL", observed: "Second schedule (starts 20:00) was selected; first (12:00) expected.", shots: 2, secs: 88 },
+	"SF-028": { verdict: "PASS", observed: "No Special Placement section and no blank gap.", shots: 1, secs: 61 },
+	"SF-034": { verdict: "EVIDENCE_ONLY", observed: "Merchant page opened; title differs in casing (\"Blibli official\").", shots: 2, secs: 83 },
+	"SF-074": { verdict: "PASS", observed: "At AX3 text size the card grows to 212 pt; nothing clipped.", shots: 2, secs: 102 },
+	"SF-084": { verdict: "BLOCKED", observed: "App stopped responding for 30 s on \"Tomorrow\"; crash log attached.", shots: 1, secs: 45 },
+};
+const DEFAULT_SELECTION = ["SF-001", "SF-006", "SF-013", "SF-023", "SF-028", "SF-034", "SF-074", "SF-084"];
+// Steps Claude records while following a prompt. `el` = generated element ID; quality: id (by accessibility ID) | label (by visible text — fragile).
+const PROMPT_STEPS = [
+	{ text: "Open the Flash Sale page", how: "deeplink blibli://flashsale" },
+	{ text: "Wait for “Flash Sale product list”", el: "el_01J9ZK0A1B", alias: "FS.ProductList", quality: "id" },
+	{ text: "Tap the “Tomorrow” tab", el: "el_01J9ZK7Q3M", alias: "FS.ScheduleTab.Tomorrow", quality: "id" },
+	{ text: "Check the product list appears within 5 s", el: "el_01J9ZK0A1B", alias: "FS.ProductList", quality: "id", check: true },
+	{ text: "Check a “Remind me” button is shown", el: "el_01J9ZKB4R7", alias: "FS.RemindMeButton", quality: "label", check: true },
+	{ text: "Take a screenshot as evidence", how: "screenshot" },
+];
+const JIRA = {
+	"IOS-47031": { type: "Bug", status: "Ready for QA", title: "App freezes on the “Tomorrow” tab when the schedule has no hero content", fixVersion: "14.8.0" },
+	"IOS-46998": { type: "Bug", status: "Ready for QA", title: "Recent search terms persist after logout", fixVersion: "14.8.0" },
+	"IOS-46729": { type: "Improvement", status: "Done", title: "Backfill rating, seller and blibliService as single toggle chips" },
+};
+// Where each element sits on its screen (percent of the phone) — drives the macro map's highlight boxes.
+const ELEMENT_BOX = { "FS.ProductList": [6, 30, 88, 56], "FS.ScheduleTab.Tomorrow": [37, 13, 27, 5], "FS.RemindMeButton": [56, 63, 36, 6], "Tabbar.Account": [78, 92, 18, 6], "Account.LoginButton": [10, 24, 80, 7], "Login.EmailField": [8, 30, 84, 7], "Login.PasswordField": [8, 40, 84, 7], "Account.Name": [10, 14, 60, 5] };
+const screenOf = (s) => (!s.alias ? null : s.alias.startsWith("FS.") ? "Flash Sale page" : s.alias.startsWith("Login.") ? "Login page" : "Account tab");
+const slug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const macroPath = (name) => `BlibliMobile-iOS/BlibliMobile_XCUITest/Engagement/FlashSale/macros/${slug(name)}.json`;
+function macroMap(steps) {
+	const groups = [];
+	let screen = steps[0]?.how?.startsWith("deeplink") ? "Flash Sale page" : screenOf(steps.find((x) => x.alias) ?? {}) ?? "App";
+	steps.forEach((step, i) => {
+		const sc = screenOf(step) ?? screen;
+		if (!groups.length || groups[groups.length - 1].screen !== sc) groups.push({ screen: sc, steps: [] });
+		groups[groups.length - 1].steps.push({ ...step, n: i + 1 });
+		screen = sc;
+	});
+	return `<div class="map">${groups.map((g, gi) => `${gi ? `<div class="map-hop">↓ goes to</div>` : ""}<div class="map-screen"><div class="map-screen-title">📱 ${esc(g.screen)}</div><div class="map-steps">${g.steps.map((st, si) => {
+		const box = ELEMENT_BOX[st.alias];
+		const cls = [st.check ? "check" : "", st.quality === "label" ? "weak" : ""].join(" ");
+		const hl = box ? `<i class="hl" style="left:${box[0]}%;top:${box[1]}%;width:${box[2]}%;height:${box[3]}%"></i>` : `<i class="full"></i>`;
+		return `${si ? `<span class="map-arrow">→</span>` : ""}<div class="map-step ${st.quality === "label" ? "weak" : ""}"><div class="mini ${cls}">${hl}</div><div><b>${st.n}.</b> ${st.check ? "✓ " : ""}${esc(st.text)}<div class="note">${st.el ? `${esc(st.alias)} · <span class="mono">${st.el}</span>` : esc(st.how)}</div>${st.el ? (st.quality === "id" ? `<span class="tag">by ID</span>` : `<span class="tag" style="color:var(--warn)">by text ⚠</span>`) : `<span class="tag">app action</span>`}</div></div>`;
+	}).join("")}</div></div>`).join("")}</div>
+	<div class="note">Blue box = element Claude taps or reads · green = what it checks · amber = found by visible text (fragile) · dashed = whole screen.</div>`;
+}
+const TICKET = { key: "IOS-47031", title: "App freezes on the “Tomorrow” tab when the schedule has no hero content" };
+const seedMacros = () => [
+	{ id: "mc_01J9ZL0K4P", name: "Login as test user", kind: "routine", last: "✓ yesterday", steps: [
+		{ text: "Open the Account tab", el: "el_01J9ZA1C2D", alias: "Tabbar.Account", quality: "id" },
+		{ text: "Tap “Masuk”", el: "el_01J9ZA3E4F", alias: "Account.LoginButton", quality: "id" },
+		{ text: "Type the test account e-mail", el: "el_01J9ZA5G6H", alias: "Login.EmailField", quality: "id" },
+		{ text: "Type the password", el: "el_01J9ZA7J8K", alias: "Login.PasswordField", quality: "id" },
+		{ text: "Check the account name is shown", el: "el_01J9ZA9L0M", alias: "Account.Name", quality: "id", check: true },
+	] },
+	{ id: "mc_01J9ZM2V8D", name: "IOS-47031 · Tomorrow tab must not freeze", kind: "bug", last: "✓ 2 days ago", steps: PROMPT_STEPS },
+];
+// Saved setups live outside S so they survive scenario switches (they're the user's own data).
+const SETUPS = [{ name: "Flash Sale regression on develop", note: "yesterday · 7 passed · 1 failed", mode: "github", branch: "develop", localId: "poc", selected: DEFAULT_SELECTION }];
+const KIND_LABEL = { flow: "Flow check", bug: "Bug-fix check", routine: "Routine" };
+
+// ---------------------------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------------------------
+const fresh = () => ({
+	phase: "form", // form → pipeline → results
+	mode: "github", localId: "poc", localDrift: false,
+	repo: "BlibliIOSApp", branch: "develop", branchQuery: "", comboOpen: false,
+	source: "https://gdncomm.atlassian.net/wiki/spaces/GDNIT/pages/2396520535", casesRead: false, reading: false, mappingFixed: true,
+	selected: new Set(DEFAULT_SELECTION), filter: "", mocks: "none", policy: "ask", skipBuild: false, skipReason: "",
+	// What the TestForge already has ready from earlier runs — lets repeat runs skip work.
+	preparedSha: null, builtSha: null, simState: "missing", harness: "stopped",
+	stages: [], sha: null,
+	runIndex: 0, runResults: {}, approval: null, approvedOnce: false, paused: false, tick: 0,
+	human: {}, flaky: new Set(), drawer: null, dialog: null, scenario: null,
+	// Prompt ("describe it in your own words") and macros
+	testsMode: "cases", promptKind: "flow", promptText: "", promptTicket: "", startFrom: "", jira: null, jiraLoading: false, jiraError: "", mapMacro: null,
+	runKind: "cases", // cases | prompt | replay
+	recorded: [], promptResult: null, promptReview: null, showChange: false,
+	macros: seedMacros(), replayMacro: null, replayIndex: 0, heal: null, healed: false,
+});
+let S = fresh();
+const timers = new Set();
+function later(ms, fn) { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; }
+function clearTimers() { for (const t of timers) clearTimeout(t); timers.clear(); if (S.runIv) clearInterval(S.runIv); }
+
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const branchInfo = () => BRANCHES.find((b) => b.name === S.branch) ?? BRANCHES[0];
+const localInfo = () => LOCALS.find((l) => l.id === S.localId) ?? LOCALS[0];
+const isLocal = () => S.mode === "local";
+const codeBranch = () => (isLocal() ? localInfo().branch : S.branch);
+const targetSha = () => { const l = localInfo(); return isLocal() ? (l.changes ? `${l.sha}+${S.localDrift ? "7f20" : "e41a"}` : l.sha) : branchInfo().sha; };
+const runCases = () => CASES.filter((c) => S.selected.has(c.id));
+const allValidated = () => Object.keys(S.runResults).every((id) => S.human[id] && S.human[id].kind !== "rerun");
+const verdictOf = (id) => (S.flaky.has(id) ? "FLAKY" : S.runResults[id]?.verdict);
+const stage = (key) => S.stages.find((s) => s.key === key);
+function toast(text) {
+	const node = document.createElement("div");
+	node.className = "toast"; node.textContent = text;
+	document.getElementById("toasts").append(node);
+	setTimeout(() => node.remove(), 3800);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------------------------------
+let TAB = "home";
+const TABS = [["home", "Home"], ["sessions", "Sessions"], ["queue", "Queue"], ["projects", "Projects"], ["mocking", "Mocking"], ["driver", "Driver Console"], ["cases", "Test Cases"]];
+function render() {
+	renderChips();
+	document.getElementById("tabs").innerHTML = TABS.map(([k, label]) => `<button role="tab" data-act="tab" data-tab="${k}" aria-selected="${TAB === k}">${label}</button>`).join("");
+	document.getElementById("main").innerHTML = TAB === "home" ? homeView() : TAB === "cases" ? intro() + (S.phase === "form" ? formView() : runView())
+		: `<section class="card"><h3>${TABS.find(([k]) => k === TAB)[1]}</h3><div class="note">Unchanged from today's dashboard — not part of this prototype. Use <b>Home</b> or <b>Test Cases</b>.</div></section>`;
+	renderRail(); renderOverlay();
+}
+function renderChips() {
+	const sim = S.simState === "booted" ? `<span class="chip ok">QA simulator: on</span>` : `<span class="chip">QA simulator: off</span>`;
+	document.getElementById("chips").innerHTML = `<span class="chip ok">Server: online</span>${sim}<span class="chip ok">Claude: connected</span>`;
+}
+function intro() {
+	if (S.phase !== "form") return `<div class="intro"><h2>Test your app on the simulator</h2></div>`;
+	return `<div class="intro"><h2>Test your app on the simulator</h2>
+		<p>Answer three questions and press <b>Run</b>. The TestForge then gets the code, builds the app, starts a simulator and checks everything by itself. It only stops if something needs you.</p></div>`;
+}
+
+// Home: start actions, what needs you, recent runs, macros --------------------------------------
+const RECENT_RUNS = [
+	{ name: "Flash Sale regression", code: "develop @ a1b2c3d", result: "5 passed · 1 failed · 1 couldn't finish · 1 to judge", when: "today 12:41", state: "To review", scenario: "results" },
+	{ name: "Bug-fix check · IOS-47031", code: "darshan/bugfix/…-fixes-2 @ 3f9b2c1", result: "PASS", when: "today 11:02", state: "Reviewed ✓", scenario: "promptresult" },
+	{ name: "Replay · Login as test user", code: "develop @ a1b2c3d", result: "PASS · 5 steps in 7 s", when: "yesterday", state: "No review needed", scenario: "replay" },
+	{ name: "Flash Sale regression", code: "release/v14.9.0 @ 7c41e90", result: "7 passed · 1 failed", when: "yesterday", state: "Reviewed ✓", scenario: "results" },
+];
+function homeView() {
+	const live = S.phase === "pipeline";
+	const pendingReview = S.phase === "results" && S.runKind === "cases" ? Object.keys(S.runResults).filter((id) => !S.human[id]).length : 0;
+	const needs = [];
+	if (S.approval) needs.push(`<div class="needs"><span>✋</span><span class="grow"><b>Claude asks for permission</b> during ${esc(runCases()[S.runIndex]?.id ?? "a test")}<div class="note">The run is paused until you answer.</div></span><button data-act="goto-cases">Answer</button></div>`);
+	if (S.heal) needs.push(`<div class="needs"><span>🔧</span><span class="grow"><b>A macro replay needs a repair</b> — “${esc(S.replayMacro.name)}”</span><button data-act="goto-cases">Open</button></div>`);
+	needs.push(pendingReview
+		? `<div class="needs"><span>📝</span><span class="grow"><b>${pendingReview} results to review</b> — your current run<div class="note">Claude's verdicts count only after your sign-off.</div></span><button data-act="goto-cases">Review</button></div>`
+		: `<div class="needs"><span>📝</span><span class="grow"><b>4 results to review</b> — Flash Sale regression on develop, today 12:41<div class="note">Claude's verdicts count only after your sign-off.</div></span><button data-act="open-run" data-scenario="results">Review</button></div>`);
+	return `
+	<div class="intro"><h2>What do you want to do?</h2><p>Everything runs on the QA simulator with Claude and QADriver. Your own repository, Xcode and simulator are never touched.</p></div>
+	<div class="start-grid">
+		<button class="start-card" data-act="start-cases"><span class="big">🧪</span><b>Run test cases</b><span class="note">Pick a branch or local repository and the test cases from a Confluence page.</span></button>
+		<button class="start-card" data-act="start-prompt"><span class="big">💬</span><b>Describe a check</b><span class="note">Say in your own words what to check or which bug fix to verify. Claude does it and records the steps.</span></button>
+		<button class="start-card" data-act="start-replay"><span class="big">⚡</span><b>Replay a macro</b><span class="note">Repeat a saved flow in seconds, without Claude.</span></button>
+	</div>
+	${live ? `<section class="card"><div class="row"><span class="spinner"></span><b class="grow">Running now: ${S.runKind === "replay" ? esc(S.replayMacro.name) : S.runKind === "prompt" ? "your check" : `${S.selected.size} tests`} on ${esc(codeBranch())}</b><button class="ghost small" data-act="goto-cases">Watch</button></div></section>` : ""}
+	<section class="card" aria-label="Needs you">
+		<div class="card-head"><h3>Needs you</h3><span class="hint">${needs.length} item(s)</span></div>
+		<div>${needs.join("")}</div>
+	</section>
+	<section class="card" aria-label="Recent runs">
+		<div class="card-head"><h3>Recent runs</h3></div>
+		<div class="table-wrap"><table><thead><tr><th>Run</th><th>Code</th><th>Result</th><th>When</th><th>Review</th></tr></thead><tbody>
+			${RECENT_RUNS.map((r) => `<tr class="clickable" data-act="open-run" data-scenario="${r.scenario}"><td><b>${esc(r.name)}</b></td><td class="mono" style="font-size:.76rem">${esc(r.code)}</td><td>${esc(r.result)}</td><td class="num-cell">${r.when}</td><td class="${r.state === "To review" ? "human pending" : "human accepted"}">${r.state}</td></tr>`).join("")}
+		</tbody></table></div>
+	</section>
+	<section class="card" aria-label="Macros" id="homeMacros">
+		<div class="card-head"><h3>Macros</h3><span class="hint">replays run without Claude</span></div>
+		<div class="table-wrap"><table><thead><tr><th>Macro</th><th>Kind</th><th>Steps</th><th>Found by ID</th><th>Last result</th><th></th></tr></thead><tbody>
+			${S.macros.map((m) => { const byId = m.steps.filter((x) => !x.el || x.quality === "id").length; return `<tr><td><b>${esc(m.name)}</b></td><td>${KIND_LABEL[m.kind]}</td><td class="num-cell">${m.steps.length}</td><td class="num-cell">${byId}/${m.steps.length}${byId < m.steps.length ? " ⚠" : ""}</td><td>${esc(m.last)}</td><td class="row" style="flex-wrap:nowrap"><button class="ghost small" data-act="show-map" data-id="${m.id}">Map</button><button class="small" data-act="replay" data-id="${m.id}" ${live ? "disabled" : ""}>▶ Replay</button></td></tr>`; }).join("")}
+		</tbody></table></div>
+		<div class="note">⚠ = some steps find their element by visible text; they can break when copy or language changes.</div>
+	</section>`;
+}
+
+// The form: three questions + one button ------------------------------------------------------
+function formView() {
+	const isPrompt = S.testsMode === "prompt";
+	const canRun = isPrompt ? S.promptText.trim().length >= 10 && (S.promptKind !== "bug" || S.jira) : S.casesRead && S.selected.size > 0;
+	const why = isPrompt
+		? (S.promptText.trim().length < 10 ? "Describe what to check (question 2)." : S.promptKind === "bug" && !S.jira ? "Load the bug ticket from Jira (question 2)." : "")
+		: !S.casesRead ? "Read your test cases first (question 2)." : !S.selected.size ? "Select at least one test." : "";
+	const runLabel = isPrompt ? `▶ ${S.promptKind === "routine" ? "Record it" : "Check it"} on ${esc(codeBranch())}` : `▶ Run ${S.selected.size} test${S.selected.size === 1 ? "" : "s"} on ${esc(codeBranch())}`;
+	return `
+	<section class="card" aria-label="Question 1">
+		<div class="card-head"><span class="num">1</span><h3>What code do you want to test?</h3></div>
+		<div class="seg-toggle" role="radiogroup" aria-label="Where the code comes from">
+			<label><input type="radio" name="mode" value="github" data-act="mode" ${!isLocal() ? "checked" : ""} />A branch on GitHub</label>
+			<label><input type="radio" name="mode" value="local" data-act="mode" ${isLocal() ? "checked" : ""} />A local repository (git working copy)</label>
+		</div>
+		${isLocal() ? localFields() : githubFields()}
+		<div class="note">🛡️ Your own repository, Xcode and simulator are never touched — tests run in a separate copy on a separate “QA” simulator.</div>
+	</section>
+	<section class="card" aria-label="Question 2">
+		<div class="card-head"><span class="num">2</span><h3>What should be checked?</h3>${!isPrompt && S.casesRead ? `<span class="hint">${S.selected.size} of 96 selected</span>` : ""}</div>
+		<div class="seg-toggle" role="radiogroup" aria-label="How to describe the check">
+			<label><input type="radio" name="testsmode" value="cases" data-act="tests-mode" ${!isPrompt ? "checked" : ""} />Test cases from a page</label>
+			<label><input type="radio" name="testsmode" value="prompt" data-act="tests-mode" ${isPrompt ? "checked" : ""} />Describe it in your own words</label>
+		</div>
+		${isPrompt ? promptFields() : testsFields()}
+	</section>
+	<section class="card cta-card" aria-label="Question 3">
+		<div class="card-head"><span class="num">3</span><h3>Run</h3></div>
+		<div class="radio-cards">
+			<label class="radio-card"><input type="radio" name="policy" value="ask" data-act="policy" ${S.policy === "ask" ? "checked" : ""} /><span><b>Ask me before anything unusual</b><br><span class="note">Recommended. Claude taps and reads the app freely and asks before anything else.</span></span></label>
+			<label class="radio-card"><input type="radio" name="policy" value="auto" data-act="policy" ${S.policy === "auto" ? "checked" : ""} /><span><b>Don't ask — run unattended</b><br><span class="note">For long runs of tests you've run before.</span></span></label>
+		</div>
+		<details class="adv" ${S.advOpen ? "open" : ""}><summary data-act="adv-toggle">More options</summary>
+			<div class="fields">
+				<label class="field"><span>Fake API responses (mocks)</span><select data-act="mocks"><option value="none" ${S.mocks === "none" ? "selected" : ""}>None — use the real servers</option><option value="fs" ${S.mocks === "fs" ? "selected" : ""}>Flash Sale pilot set</option></select></label>
+				<label class="field"><span>Build settings</span><input value="BlibliMobile-iOS-PerfTest · PerformanceTest" disabled /></label>
+			</div>
+			<label class="row" style="margin-top:8px"><input type="checkbox" data-act="skip-build" ${S.skipBuild ? "checked" : ""} /> Don't build — test the app already on the QA simulator</label>
+			${S.skipBuild ? `<input data-act="skip-reason" placeholder="Why? (required — the report will say UNVERIFIED BUILD)" value="${esc(S.skipReason)}" style="width:100%;margin-top:6px" />` : ""}
+		</details>
+		<div class="row">
+			<button class="cta" data-act="start" ${canRun ? "" : "disabled"}>${runLabel}</button>
+			<span class="note grow">${why || (S.builtSha ? "Already set up from last time — starts in about a minute." : "First run takes ~25 min (one-time setup and build). Later runs start in about a minute.")}</span>
+		</div>
+	</section>`;
+}
+function githubFields() {
+	const q = S.branchQuery.toLowerCase();
+	const list = BRANCHES.filter((b) => b.name.toLowerCase().includes(q));
+	return `<div class="fields">
+		<label class="field"><span>Project</span><select data-act="repo">${REPOS.map((r) => `<option ${r === S.repo ? "selected" : ""}>${r}</option>`).join("")}<option value="__add">Add a project by GitHub link…</option></select></label>
+		<div class="field"><span>Branch</span>
+			<div class="combo">
+				<input id="branchInput" style="width:100%" value="${esc(S.comboOpen ? S.branchQuery : S.branch)}" placeholder="Type to search branches" data-act="branch-input" aria-autocomplete="list" />
+				${S.comboOpen ? `<div class="combo-list" role="listbox">${list.length ? list.map((b) => `<div class="combo-item ${b.name === S.branch ? "on" : ""}" role="option" data-act="pick-branch" data-branch="${esc(b.name)}"><span class="mono">${esc(b.name)}</span><span class="row" style="gap:6px">${b.remoteOnly ? `<span class="tag">GitHub only</span>` : ""}<span class="muted" style="font-size:.76rem">${b.when}</span></span></div>`).join("") : `<div class="combo-item muted">No branch matches “${esc(S.branchQuery)}”</div>`}</div>` : ""}
+			</div>
+			<span class="note">Latest commit: “${esc(branchInfo().title)}” · ${branchInfo().when}</span>
+		</div>
+	</div>`;
+}
+function localFields() {
+	const l = localInfo();
+	const extra = [l.unpushed ? `${l.unpushed} commit(s) not pushed` : "", l.changes ? `${l.changes} uncommitted file(s)` : ""].filter(Boolean).join(" · ");
+	return `<div class="fields">
+		<label class="field"><span>Local repository</span><select data-act="local">${LOCALS.map((x) => `<option value="${x.id}" ${x.id === l.id ? "selected" : ""}>${esc(x.name)} — ${esc(x.path)}</option>`).join("")}<option value="__other">Another local repository… (paste the folder that contains .git)</option></select></label>
+		<div class="field"><span>What will be tested</span><div><span class="mono">${esc(l.branch)}</span><div class="note">${extra ? `${esc(extra)} — included` : "Same as GitHub — no local changes"}</div></div></div>
+	</div>
+	<div class="note">Any folder with a <code>.git</code> working copy works. When you press Run, the TestForge copies a snapshot of it — committed and uncommitted changes — and only reads it, so keep coding while tests run. Reports say <b>LOCAL CHANGES</b>.</div>`;
+}
+function promptFields() {
+	const kinds = [["flow", "Check a flow"], ["bug", "Verify a bug fix"], ["routine", "Record a routine"]];
+	const placeholder = {
+		flow: "e.g. Open Flash Sale, tap the Tomorrow tab and make sure the app doesn't freeze and the product list shows.",
+		bug: "e.g. Make sure the app no longer freezes on the Tomorrow tab of Flash Sale.",
+		routine: "e.g. Log in with the test account and open the cart.",
+	}[S.promptKind];
+	return `
+		<div class="row" role="radiogroup" aria-label="Kind of check">${kinds.map(([k, label]) => `<label class="radio-card" style="padding:5px 10px"><input type="radio" name="pkind" value="${k}" data-act="prompt-kind" ${S.promptKind === k ? "checked" : ""} />${label}</label>`).join("")}</div>
+		${S.promptKind === "bug" ? `<div class="field"><span>Bug ticket</span>
+			<div class="row"><input data-act="prompt-ticket" class="grow" placeholder="e.g. IOS-47031" value="${esc(S.promptTicket)}" /><button data-act="load-jira" ${S.jiraLoading || !S.promptTicket.trim() ? "disabled" : ""}>${S.jiraLoading ? `<span class="spinner"></span> Loading…` : "Load Jira"}</button></div>
+			${S.jiraError ? `<div class="callout error" style="margin-top:6px"><span>✗</span><span class="grow">${S.jiraError}</span></div>` : ""}
+			${S.jira ? `<div class="ticket" style="margin-top:6px">🐞 <b>${esc(S.jira.key)}</b> · Bug · ${esc(S.jira.status)} · fix version ${esc(S.jira.fixVersion)}<div>${esc(S.jira.title)}</div><span class="note">Claude checks that this no longer happens.</span></div>` : `<div class="note">Only <b>Bug</b> tickets are accepted. Read through your Atlassian connection — never changed.</div>`}
+		</div>` : ""}
+		<label class="field"><span>${S.promptKind === "routine" ? "What should the routine do?" : "What should Claude check?"}</span><textarea data-act="prompt-text" rows="3" placeholder="${esc(placeholder)}">${esc(S.promptText)}</textarea></label>
+		<div class="fields">
+			<label class="field"><span>Start from (optional)</span><select data-act="start-from"><option value="">— the app's home screen —</option>${S.macros.filter((m) => m.kind === "routine").map((m) => `<option value="${m.id}" ${S.startFrom === m.id ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select></label>
+		</div>
+		<div class="note">Claude drives the app step by step, tells you what it found, and <b>records every step</b> — you can save it as a <b>macro</b> and replay it later in seconds, without Claude.</div>`;
+}
+function testsFields() {
+	if (!S.casesRead) return `
+		<label class="field"><span>Link to your test-case page (Confluence) or a file</span><input data-act="source" value="${esc(S.source)}" /></label>
+		<div class="row"><button data-act="read" ${S.reading ? "disabled" : ""}>${S.reading ? `<span class="spinner"></span> Reading the page…` : "Read test cases"}</button><span class="note">Claude reads the page through your Atlassian connection. It never writes to it.</span></div>`;
+	const shown = CASES.filter((c) => !S.filter || `${c.id} ${c.scenario}`.toLowerCase().includes(S.filter.toLowerCase()));
+	return `
+		<div class="row"><span class="grow">✓ <b>96 test cases</b> found in “Test Cases - Sub Flashsale &amp; Special Placement Section”</span><button class="link" data-act="change-source">Use a different page</button></div>
+		${!S.mappingFixed ? `<div class="callout warn"><span>⚠️</span><span class="grow">We couldn't tell which column holds the <b>steps</b>. Which column is it?</span><select data-act="map"><option>Pick a column…</option><option>Step Action</option><option>Precondition</option><option>API</option></select></div>` : ""}
+		<div class="row"><input placeholder="Search tests" value="${esc(S.filter)}" data-act="filter" class="grow" style="max-width:260px" />
+			<button class="ghost small" data-act="sel-all">Select all</button><button class="ghost small" data-act="sel-failed">Only last failures</button><button class="ghost small" data-act="sel-none">Clear</button></div>
+		<div class="table-wrap"><table>
+			<thead><tr><th style="width:32px"></th><th>Test</th><th>What it checks</th></tr></thead>
+			<tbody>${shown.map((c) => `<tr><td><input type="checkbox" data-act="sel" data-id="${c.id}" ${S.selected.has(c.id) ? "checked" : ""} aria-label="Select ${c.id}" /></td><td class="mono">${c.id}</td><td>${esc(c.scenario)}</td></tr>`).join("")}</tbody>
+		</table></div>
+		<div class="note">Prototype lists 10 of the 96.</div>`;
+}
+
+// After Run: summary line, automatic progress, results ----------------------------------------
+function runView() {
+	const busy = S.phase === "pipeline";
+	const summary = `<div class="summary-line">
+		<span><b>Testing</b> <span class="mono">${esc(codeBranch())}</span>${S.sha ? ` @ <span class="mono">${S.sha}</span>` : ""}${isLocal() ? ` <span class="chip warn">local changes</span>` : ""}</span>
+		<span class="muted">· ${S.runKind === "prompt" ? `${KIND_LABEL[S.promptKind]}: “${esc(S.promptText.slice(0, 60))}${S.promptText.length > 60 ? "…" : ""}”` : S.runKind === "replay" ? `Macro: ${esc(S.replayMacro.name)}` : `${S.selected.size} test(s)`} · QA · iPhone 17 Pro Max</span>
+		<span class="grow"></span>
+		${busy ? `<button class="ghost small" data-act="cancel-all">Stop</button>` : `<button class="ghost small" data-act="edit">Change setup</button>`}
+	</div>`;
+	const drift = S.phase === "results" && S.localDrift ? `<div class="callout warn"><span>✏️</span><span class="grow"><b>Your local repository changed after this run started</b> — 2 files edited at 12:41. These results are for the snapshot taken when you pressed Run.</span><button data-act="run-again">Run again with my latest code</button></div>` : "";
+	return summary + drift + `<section class="card" aria-label="Progress">
+		<div class="card-head"><h3>${S.phase === "results" ? "✓ Done" : "Working on it…"}</h3><span class="hint">${S.phase === "results" ? "All of this ran automatically" : "You can leave this page — it keeps going"}</span></div>
+		<ol class="stages">${S.stages.map(stageView).join("")}</ol>
+	</section>` + (S.phase !== "results" ? "" : S.runKind === "prompt" ? promptResultCard() : S.runKind === "replay" ? replayResultCard() : resultsCard());
+}
+const qualityBadge = (s) => (s.el ? `<span class="tag" title="${s.el}">${s.quality === "id" ? "by ID" : "by text ⚠"}</span>` : `<span class="tag">app action</span>`);
+function stepList(steps, states) {
+	return `<ol class="sub" style="list-style:none">${steps.map((s, i) => { const st = states?.[i]; return `<li><span class="s ${st === "ok" ? "ok" : "wait"}">${st === "ok" ? "✓" : st === "run" ? `<span class="spinner"></span>` : st === "err" ? `<span style="color:var(--danger)">✗</span>` : `${i + 1}.`}</span><span class="grow">${esc(s.text)}${s.el ? ` <span class="muted mono" style="font-size:.72rem">${s.alias}</span>` : ""}</span>${qualityBadge(s)}</li>`; }).join("")}</ol>`;
+}
+function promptRunBody() {
+	const done = S.recorded.length;
+	const isRunning = S.phase === "pipeline" && stage("run").state === "run";
+	return `
+		${S.promptKind === "bug" ? `<div class="note">📄 Read <b>${esc(S.jira?.key ?? TICKET.key)}</b> (Bug): “${esc(S.jira?.title ?? TICKET.title)}”</div>` : ""}
+		${S.startFrom ? `<div class="note">↪ Started from routine “${esc(S.macros.find((m) => m.id === S.startFrom)?.name ?? "")}”</div>` : ""}
+		<div><b>Claude is ${S.promptKind === "routine" ? "recording" : "checking"}:</b> ${esc(S.promptText)}</div>
+		${stepList(S.recorded, S.recorded.map((_, i) => (i < done - 1 || !isRunning ? "ok" : "run")))}
+		${isRunning ? `<div class="row"><span class="note grow">Each step is recorded with its element ID · watch it in the Simulator window</span><button class="ghost small" data-act="open-session">Talk to Claude</button></div>` : ""}`;
+}
+function replayRunBody() {
+	const m = S.replayMacro;
+	const states = m.steps.map((_, i) => (i < S.replayIndex ? "ok" : i === S.replayIndex ? (S.heal ? "err" : "run") : ""));
+	return `<div class="note">Replaying ${m.steps.length} recorded steps directly — no Claude, about 1–2 s per step.</div>${stepList(m.steps, states)}${healBox()}`;
+}
+function healBox() {
+	if (!S.heal) return "";
+	const s = S.replayMacro.steps[S.replayIndex];
+	if (S.heal === "found") return `<div class="callout error"><span>🔎</span><span class="grow"><b>Can't find “${esc(s.alias)}”</b> (<code>${s.el}</code>). The app's screen probably changed. Claude can look at the screen and suggest how to find it now.</span><button data-act="heal">Ask Claude to repair</button><button class="ghost" data-act="cancel-all">Stop</button></div>`;
+	if (S.heal === "looking") return `<div class="callout warn"><span class="spinner"></span><span class="grow">Claude is looking at the current screen…</span></div>`;
+	return `<div class="approval"><b>Claude suggests a fix for “${esc(s.alias)}”</b>
+		<div class="cmp"><div><b>Was</b><code>FS_ScheduleTab</code> · button · #2</div><div><b>Now</b><code>FS_ScheduleTabItem</code> · button · #2</div></div>
+		<span class="note">Found by its text “Besok” in the same tab bar. This element is used by <b>2 macros</b> — fixing it here fixes both.</span>
+		<div class="row"><button data-act="approve-heal">Approve fix and continue</button><button class="ghost" data-act="cancel-all">Don't fix — stop</button></div></div>`;
+}
+function promptResultCard() {
+	const r = S.promptResult; const rev = S.promptReview;
+	const labelSteps = S.recorded.filter((s) => s.quality === "label").length;
+	return `<section class="card" aria-label="Result">
+		<div class="card-head"><h3>Result — your review</h3><span class="hint">${rev ? "Reviewed ✓" : "To review"}</span></div>
+		<div class="row"><span class="badge b-${r.verdict}">${r.verdict}</span><span class="grow">${esc(r.summary)}</span></div>
+		<div class="shots"><div class="shot"></div><div class="shot"></div></div>
+		${rev ? `<div class="human ${rev.kind}">${rev.kind === "accepted" ? "✓ You agreed." : `↺ Changed to ${rev.to}: “${esc(rev.reason)}”`}</div>` : `
+		<div class="row"><button data-act="p-agree">Agree: ${r.verdict}</button><button class="ghost" data-act="p-change">Change the verdict…</button></div>
+		${S.showChange ? `<div class="row"><select id="pvTo"><option>FAIL</option><option>PASS</option></select><input id="pvReason" class="grow" placeholder="Why? (required)" /><button class="ghost" data-act="p-change-confirm">Change</button></div><span id="pvErr" class="note" style="color:var(--danger)" hidden>Please give a reason.</span>` : ""}`}
+		<div class="panel-title">What Claude did — recorded as ${S.recorded.length} steps</div>
+		${stepList(S.recorded, S.recorded.map(() => "ok"))}
+		${labelSteps ? `<div class="note">⚠ ${labelSteps} step finds its element by visible text, not an ID — it can break if the text or language changes. Ask a developer to add an accessibility ID.</div>` : ""}
+		<div class="row"><button data-act="save-macro" ${S.savedMacro ? "disabled" : ""}>${S.savedMacro ? "✓ Saved as a macro" : "Save as macro…"}</button><button class="ghost" data-act="new-test">Start a new check</button></div>
+	</section>`;
+}
+function replayResultCard() {
+	const m = S.replayMacro;
+	return `<section class="card" aria-label="Replay result">
+		<div class="card-head"><h3>Replay result</h3><span class="hint">no Claude used</span></div>
+		<div class="validated"><span>✅</span><b class="grow">PASS — all ${m.steps.length} steps of “${esc(m.name)}” worked, in 9 s.</b></div>
+		${S.healed ? `<div class="note">🔧 1 element was repaired during this replay (approved by you) — 2 macros now use the new locator.</div>` : ""}
+		${stepList(m.steps, m.steps.map(() => "ok"))}
+		<div class="row"><button data-act="replay" data-id="${m.id}">▶ Replay again</button><button class="ghost" data-act="new-test">Back</button></div>
+	</section>`;
+}
+function stageView(s) {
+	const icon = { ok: "✓", skip: "✓", error: "!", needs: "!", waiting: "…", run: `<span class="spinner"></span>`, wait: "" }[s.state];
+	const isRunStage = s.key === "run" && s.state !== "wait";
+	const showBody = isRunStage || ["run", "error", "needs", "waiting"].includes(s.state);
+	const lines = s.lines?.length && s.key !== "run" ? `<ul class="sub">${s.lines.map((l) => `<li><span class="s ${l.s}">${l.s === "ok" ? "✓" : l.s === "run" ? `<span class="spinner"></span>` : "·"}</span><span>${esc(l.label)}</span></li>`).join("")}</ul>` : "";
+	return `<li class="stage ${s.state}">
+		<span class="ic">${icon}</span>
+		<div class="stage-title"><b>${esc(s.label)}</b><span class="stage-note">${esc(s.note ?? "")}</span></div>
+		${showBody ? `<div class="stage-body">${isRunStage ? runStageBody() : ""}${lines}${s.problem ?? ""}</div>` : ""}
+	</li>`;
+}
+function runStageBody() {
+	if (S.runKind !== "cases" && S.phase === "results") return "";
+	if (S.runKind === "prompt") return promptRunBody();
+	if (S.runKind === "replay") return replayRunBody();
+	const cases = runCases();
+	const c = cases[S.runIndex];
+	const isRunning = S.phase === "pipeline" && stage("run").state === "run";
+	const strip = `<div class="case-strip">${cases.map((x, i) => `<span class="badge b-${S.runResults[x.id] ? verdictOf(x.id) : i === S.runIndex && isRunning ? "RUNNING" : "QUEUED"}" title="${esc(x.scenario)}">${x.id}</span>`).join("")}</div>`;
+	if (!isRunning || !c) return strip;
+	const steps = ["Open the Flash Sale page", "Wait for the schedule tabs", "Read the tab labels", "Compare with the expected result", "Take a screenshot as evidence"];
+	const now = S.tick % steps.length;
+	return strip + `
+		<div><b>${c.id}</b> — ${esc(c.scenario)}<div class="note">Test ${S.runIndex + 1} of ${cases.length}${S.paused ? " · will pause after this test" : ""} · watch it in the Simulator window</div></div>
+		<ul class="sub">${steps.map((s, i) => `<li><span class="s ${i < now ? "ok" : "wait"}">${i < now ? "✓" : i === now ? `<span class="spinner"></span>` : "·"}</span><span>${s}</span></li>`).join("")}</ul>
+		${S.approval ? `<div class="approval"><b>Claude asks: may I run this command?</b><pre>xcrun simctl status_bar booted override --time "09:41"</pre><span class="note">Why: freeze the clock so the countdown screenshot is stable.</span>
+			<div class="row"><button data-act="approve">Allow</button><button class="ghost" data-act="approve-always">Always allow</button><button class="danger" data-act="deny">Don't allow</button></div></div>` : ""}
+		<div class="row"><button class="ghost small" data-act="pause" ${S.paused ? "disabled" : ""}>Pause after this test</button><button class="ghost small" data-act="skip-case">Skip this test</button><button class="ghost small" data-act="open-session">Talk to Claude</button></div>`;
+}
+function resultsCard() {
+	const ids = Object.keys(S.runResults);
+	const count = (v) => ids.filter((id) => verdictOf(id) === v).length;
+	const failed = ids.filter((id) => ["FAIL", "BLOCKED"].includes(verdictOf(id)));
+	const toReview = ids.filter((id) => !S.human[id] || S.human[id].kind === "rerun").length;
+	return `<section class="card" aria-label="Results">
+		<div class="card-head"><h3>Results — your review</h3><span class="hint">${toReview ? `${toReview} to review` : "All reviewed ✓"}</span></div>
+		<div class="summary-nums"><span><b style="color:var(--ok)">${count("PASS")}</b> passed</span><span><b style="color:var(--danger)">${count("FAIL")}</b> failed</span><span><b style="color:var(--warn)">${count("BLOCKED")}</b> couldn't finish</span><span><b style="color:var(--info)">${count("EVIDENCE_ONLY") + count("UNDECIDED")}</b> need your judgement</span><span><b style="color:var(--proto)">${count("FLAKY")}</b> flaky</span></div>
+		${!toReview ? `<div class="validated"><span>✅</span><b class="grow">Reviewed — every result has your sign-off.</b><button data-act="report">Create report</button><button class="ghost" data-act="save-setup">Save as a setup</button></div>` : `<div class="note">Claude's verdicts are suggestions. Open a test to see its screenshots, then <b>Agree</b>, <b>Change the verdict</b> (with a reason) or <b>Run it again</b>.</div>`}
+		<div class="table-wrap"><table>
+			<thead><tr><th>Test</th><th>Claude says</th><th>Evidence</th><th>Time</th><th>Your review</th><th></th></tr></thead>
+			<tbody>${ids.map((id) => { const r = S.runResults[id]; const h = S.human[id]; const v = verdictOf(id); return `<tr class="clickable" data-act="open-case" data-id="${id}">
+				<td><span class="mono">${id}</span><div class="note">${esc(CASES.find((c) => c.id === id).scenario)}</div></td>
+				<td><span class="badge b-${v}">${v}</span></td><td class="num-cell">📸 ${r.shots}</td><td class="num-cell">${Math.floor(r.secs / 60)}m ${r.secs % 60}s</td>
+				<td>${h ? `<span class="human ${h.kind}">${h.kind === "accepted" ? "✓ Agreed" : h.kind === "overridden" ? `↺ ${h.to} — “${esc(h.reason)}”` : "↻ Re-run asked"}</span>` : `<span class="human pending">To review</span>`}</td>
+				<td>${!h && v === "PASS" ? `<button class="ghost small" data-act="quick-accept" data-id="${id}">Agree</button>` : ""}</td></tr>`; }).join("")}</tbody>
+		</table></div>
+		<div class="row">${failed.length ? `<button class="ghost" data-act="rerun-failed">Re-run the ${failed.length} that didn't pass</button>` : ""}<button class="ghost" data-act="accept-all-pass">Agree with all passes</button><button class="ghost" data-act="new-test">Start a new test</button></div>
+	</section>`;
+}
+
+// Rail ------------------------------------------------------------------------------------------
+function renderRail() {
+	const isBooted = S.simState === "booted";
+	const running = S.phase === "pipeline" && stage("run")?.state === "run";
+	document.getElementById("rail").innerHTML = `
+	<div class="panel">
+		<h2>QA simulator</h2>
+		<div class="note">iPhone 17 Pro Max · iOS 26.1</div>
+		<div class="row">${isBooted ? `<span class="chip ok">On</span>${running ? `<span class="chip info">Testing ${runCases()[S.runIndex]?.id ?? ""}</span>` : `<span class="chip ok">Free</span>`}` : `<span class="chip">${S.simState === "missing" ? "Not created yet" : "Off"}</span>`}</div>
+		${isBooted
+			? `<button class="ghost" data-act="show-sim">Show Simulator window</button><button class="ghost" data-act="noop">💬 Ask Claude about this screen</button><div class="note">Tip: pin the Simulator window next to this browser to watch tests live.</div>`
+			: `<div class="note">${S.simState === "missing" ? "Created automatically on your first run." : "Started automatically when you run."}</div>`}
+	</div>
+	<div class="panel">
+		<h2>Macros</h2>
+		${S.macros.map((m) => { const byId = m.steps.filter((s) => !s.el || s.quality === "id").length; return `<div class="row" style="align-items:flex-start"><span class="grow">${esc(m.name)}<div class="note">${KIND_LABEL[m.kind]} · ${m.steps.length} steps · ${byId}/${m.steps.length} by ID · ${esc(m.last)}</div></span><button class="small" data-act="replay" data-id="${m.id}" ${S.phase === "pipeline" ? "disabled" : ""}>▶ Replay</button></div>`; }).join("")}
+		<div class="note">Replays run without Claude — about 1–2 s per step.</div>
+	</div>
+	<div class="panel">
+		<h2>Saved setups</h2>
+		${SETUPS.map((x, i) => `<div class="row"><span class="grow">${esc(x.name)}<div class="note">${esc(x.note)}</div></span><button class="small" data-act="run-saved" data-i="${i}" ${S.phase === "pipeline" ? "disabled" : ""}>▶ Run again</button></div>`).join("")}
+	</div>`;
+}
+
+// Overlays --------------------------------------------------------------------------------------
+function renderOverlay() {
+	const root = document.getElementById("overlayRoot");
+	if (S.drawer) {
+		const id = S.drawer; const c = CASES.find((x) => x.id === id); const r = S.runResults[id]; const v = verdictOf(id); const h = S.human[id];
+		root.innerHTML = `<div class="overlay" data-act="close-overlay"><div class="drawer" role="dialog" aria-label="${id} details" data-stop>
+			<div class="row"><h2 class="grow" style="font-size:1rem">${id} <span class="badge b-${v}">${v}</span></h2><button class="ghost small" data-act="close-overlay">Close</button></div>
+			<div>${esc(c.scenario)}</div>
+			<div class="cmp"><div><b>Expected</b>${esc(c.expected)}</div><div><b>What Claude saw</b>${esc(r.observed)}</div></div>
+			<div><div class="panel-title" style="margin-bottom:6px">Screenshots</div><div class="shots">${Array.from({ length: r.shots }, () => `<div class="shot"></div>`).join("")}</div></div>
+			<div class="note">Claude's reasoning: ${v === "FAIL" ? "The selected tab label was “20:00”. The test expects the earliest start (12:00) to be selected by default." : v === "BLOCKED" ? "The app stopped responding after tapping “Tomorrow”; the test runner timed out at 30 s. Crash log attached." : v === "EVIDENCE_ONLY" ? "Navigation worked; the merchant title casing differs from the doc. A human should decide if that matters." : "Everything expected was found and matched."}</div>
+			<div class="panel-title">Your review</div>
+			${h ? `<div class="human ${h.kind}">${h.kind === "accepted" ? "✓ You agreed." : h.kind === "overridden" ? `↺ Changed to ${h.to}: “${esc(h.reason)}”` : "↻ Re-run asked."} <button class="ghost small" data-act="undo-signoff" data-id="${id}">Change</button></div>` : `
+			<div class="row"><button data-act="accept" data-id="${id}">Agree: ${v}</button><button class="ghost" data-act="rerun-one" data-id="${id}">Run it again</button></div>
+			<div class="field"><span>Or change the verdict — anyone may, with a reason</span>
+				<div class="row"><select id="ovTo"><option>PASS</option><option>FAIL</option></select><input id="ovReason" class="grow" placeholder="Why? e.g. title casing matches design spec v3" /><button class="ghost" data-act="override" data-id="${id}">Change</button></div>
+				<span id="ovErr" class="note" style="color:var(--danger)" hidden>Please give a reason (at least a few words).</span></div>`}
+		</div></div>`;
+		return;
+	}
+	if (S.dialog === "report") {
+		const lines = Object.keys(S.runResults).map((id) => { const h = S.human[id]; return `| ${id} | ${verdictOf(id)} | ${h.kind === "overridden" ? `changed → ${h.to}: ${h.reason}` : "agreed"} |`; }).join("\n");
+		root.innerHTML = `<div class="dialog-wrap"><div class="dialog" role="dialog" aria-label="Run report">
+			<h2 style="font-size:1rem">Report</h2>
+			<div class="report"># QA run — Sub Flashsale &amp; Special Placement
+Code     ${isLocal() ? esc(localInfo().path) + " (local repository)" : "gdncomm/" + esc(S.repo)}
+Branch   ${esc(codeBranch())} @ ${S.sha}${isLocal() ? "   ⚠ LOCAL CHANGES — not reproducible from GitHub" : ""}${S.skipBuild ? "   ⚠ UNVERIFIED BUILD" : ""}
+Device   QA · iPhone 17 Pro Max · iOS 26.1
+Tests    Confluence 2396520535 · ${Object.keys(S.runResults).length} tests
+Mocks    ${S.mocks === "fs" ? "Flash Sale pilot set" : "none"}
+
+| Test | Claude | Review |
+|---|---|---|
+${esc(lines)}</div>
+			<div class="note">Published only to your personal Confluence page. The team's test-case page is never written to.</div>
+			<div class="row"><button data-act="export">Download file</button><button data-act="publish">Publish to my Confluence page</button><button class="ghost" data-act="close-overlay">Close</button></div></div></div>`;
+		return;
+	}
+	if (S.dialog === "save-setup") {
+		root.innerHTML = `<div class="dialog-wrap"><div class="dialog" role="dialog" aria-label="Save setup">
+			<h2 style="font-size:1rem">Save as a setup</h2>
+			<label class="field"><span>Name</span><input id="setupName" value="Flash Sale regression on ${esc(codeBranch())}${isLocal() ? " (local)" : ""}" /></label>
+			<div class="note">Remembers your answers to the three questions. Next time: one click on <b>▶ Run again</b>, always with the latest code.</div>
+			<div class="row"><button data-act="confirm-save">Save</button><button class="ghost" data-act="close-overlay">Cancel</button></div></div></div>`;
+		return;
+	}
+	if (S.dialog === "macro-map") {
+		const m = S.macros.find((x) => x.id === S.mapMacro);
+		root.innerHTML = `<div class="dialog-wrap"><div class="dialog wide" role="dialog" aria-label="Macro map">
+			<div class="row"><h2 class="grow" style="font-size:1rem">${esc(m.name)}</h2><span class="tag">${KIND_LABEL[m.kind]}</span></div>
+			${macroMap(m.steps)}
+			<div class="note">📁 <code>${macroPath(m.name)}</code></div>
+			<div class="row"><button data-act="replay" data-id="${m.id}">▶ Replay</button><button class="ghost" data-act="close-overlay">Close</button></div></div></div>`;
+		return;
+	}
+	if (S.dialog === "save-macro") {
+		const defaultName = S.promptKind === "bug" ? `${S.jira?.key ?? TICKET.key} · Tomorrow tab must not freeze` : S.promptKind === "routine" ? "New routine" : "Flash Sale · Tomorrow tab works";
+		root.innerHTML = `<div class="dialog-wrap"><div class="dialog wide" role="dialog" aria-label="Save as macro">
+			<h2 style="font-size:1rem">Save as macro</h2>
+			<label class="field"><span>Name</span><input id="macroName" value="${esc(defaultName)}" /></label>
+			<label class="field"><span>Kind</span><select id="macroKind">${Object.entries(KIND_LABEL).map(([k, v]) => `<option value="${k}" ${k === S.promptKind ? "selected" : ""}>${v}</option>`).join("")}</select></label>
+			<div class="panel-title">Map of the macro — check it at a glance</div>
+			${macroMap(S.recorded)}
+			<div class="note">📁 Saved in the repository: <code>${macroPath(defaultName)}</code> — next to the UI tests, <b>never added to the app</b> or any build target. New element IDs go into <code>BlibliMobile_XCUITest/QAMacros/elements.json</code>.</div>
+			<label class="row"><input type="checkbox" id="macroReviewed" data-act="macro-reviewed" /> I've checked the map — these steps do what I asked</label>
+			<div class="row"><button data-act="confirm-macro" id="confirmMacro" disabled>Save macro</button><button class="ghost" data-act="close-overlay">Cancel</button></div></div></div>`;
+		return;
+	}
+	root.innerHTML = "";
+}
+
+// ---------------------------------------------------------------------------------------------
+// The automatic pipeline (fake, timed to feel real)
+// ---------------------------------------------------------------------------------------------
+function startPipeline() {
+	if (S.skipBuild && S.skipReason.trim().length < 8) { S.advOpen = true; render(); toast("Give a reason for not building (More options)"); return; }
+	S.phase = "pipeline"; S.runResults = {}; S.human = {}; S.flaky = new Set(); S.runIndex = 0; S.approval = null; S.paused = false;
+	S.recorded = []; S.promptResult = null; S.promptReview = null; S.savedMacro = false; S.showChange = false; S.replayIndex = 0; S.heal = null;
+	const runLabel = S.runKind === "prompt" ? (S.promptKind === "routine" ? "Claude records the routine" : "Claude checks it") : S.runKind === "replay" ? `Replay “${S.replayMacro.name}” (no Claude)` : `Run ${S.selected.size} test(s)`;
+	S.stages = [
+		{ key: "code", label: isLocal() ? "Snapshot your local repository" : "Get the code", state: "wait" },
+		{ key: "build", label: "Build the app", state: "wait" },
+		{ key: "device", label: "Get the QA simulator ready", state: "wait" },
+		{ key: "check", label: "Final checks", state: "wait" },
+		{ key: "run", label: runLabel, state: "wait" },
+	];
+	render(); runStage(0);
+}
+function animate(s, items, total, done) {
+	s.state = "run"; s.problem = null; s.note = ""; s.lines = items.map((label, i) => ({ label, s: i ? "wait" : "run" })); render();
+	const per = total / items.length;
+	items.forEach((_, i) => later(per * (i + 1), () => { s.lines[i].s = "ok"; if (s.lines[i + 1]) s.lines[i + 1].s = "run"; render(); if (i === items.length - 1) done(); }));
+}
+function finish(i, state, note) { const s = S.stages[i]; s.state = state; s.note = note; s.lines = []; s.problem = null; render(); later(350, () => runStage(i + 1)); }
+function stop(i, state, problem, note) { const s = S.stages[i]; s.state = state; s.lines = []; s.problem = problem; s.note = note ?? ""; render(); }
+function runStage(i) {
+	const s = S.stages[i];
+	if (!s || S.phase !== "pipeline") return;
+	switch (s.key) {
+		case "code": {
+			const sha = targetSha();
+			if (S.preparedSha === sha) { S.sha = sha; finish(i, "skip", `Already up to date · ${sha}`); return; }
+			if (S.scenario === "vpn" && !S.vpnRetried) {
+				animate(s, ["Contact GitHub"], 1200, () => { S.vpnRetried = true; stop(i, "error", `<div class="callout error"><span>⚠️</span><span class="grow"><b>Can't reach GitHub.</b> This usually means the VPN is off. Connect the VPN, then retry.</span><button data-act="retry" data-i="${i}">Retry</button></div>`, "Couldn't reach GitHub"); });
+				return;
+			}
+			const items = isLocal() ? [`Read ${localInfo().path} (read only)`, "Copy the snapshot", "Install libraries (only if they changed)"] : ["Download the latest code", `Switch to ${S.branch}`, "Install libraries (only if they changed)"];
+			animate(s, items, 1800, () => { S.preparedSha = sha; S.sha = sha; finish(i, "ok", `${codeBranch()} @ ${sha}`); });
+			return;
+		}
+		case "build": {
+			if (S.skipBuild) { finish(i, "skip", "Skipped — UNVERIFIED BUILD"); return; }
+			if (S.builtSha === S.sha) { finish(i, "skip", `Already built for ${S.sha}`); return; }
+			animate(s, ["Compile the app", "Compile the test runner", "Package"], 2100, () => {
+				if (S.scenario === "buildfail" && !S.buildRetried) { S.buildRetried = true; stop(i, "error", `<div class="callout error"><span>✗</span><span class="grow"><b>The app didn't build.</b> First error: <code>FlashSaleHeaderView.swift:118: cannot find 'BliBadge' in scope</code>. That's a problem in the code on this branch, not in your setup — send the log to its developer.</span><button class="ghost" data-act="copy-log">Copy log</button><button data-act="retry" data-i="${i}">Try again</button></div>`, "Build failed"); return; }
+				S.builtSha = S.sha; finish(i, "ok", "Built in 8 min 12 s");
+			});
+			return;
+		}
+		case "device": {
+			if (S.simState === "booted" && S.harness === "up" && S.installedSha === S.sha) { finish(i, "skip", "Ready"); return; }
+			const items = [S.simState === "missing" ? "Create the QA simulator (first time only)" : S.simState === "booted" ? "QA simulator is on" : "Start the QA simulator", "Install the new build", "Start the test runner"];
+			animate(s, items, 1600, () => { S.simState = "booted"; S.harness = "up"; S.installedSha = S.sha; finish(i, "ok", "Ready"); });
+			return;
+		}
+		case "check": {
+			if (S.scenario === "busy" && !S.busyDone) {
+				stop(i, "waiting", `<div class="callout warn"><span>⏳</span><span class="grow"><b>Waiting for the simulator</b> — “Run SF-040 (chat)” is using it. This continues by itself when it's free.</span><button class="ghost" data-act="noop">Open Queue</button></div>`, "Waiting…");
+				later(2600, () => { S.busyDone = true; runStage(i); });
+				return;
+			}
+			if (S.scenario === "disk" && !S.diskFixed) {
+				animate(s, ["Code, build and simulator match", "Claude and the test tools are connected", "Disk space"], 900, () => stop(i, "needs", `<div class="callout warn"><span>💾</span><span class="grow"><b>Not enough disk space</b> — 6 GB free, 10 GB needed. Old QA copies not used for 14 days take 22 GB.</span><button data-act="free-disk" data-i="${i}">Free 22 GB and continue</button></div>`, "Needs you"));
+				return;
+			}
+			animate(s, ["Code, build and simulator match", "Claude and the test tools are connected", "Disk space", "Nobody else is using the simulator"], 900, () => finish(i, "ok", "All good"));
+			return;
+		}
+		case "run": s.state = "run"; s.note = ""; render(); (S.runKind === "prompt" ? runPrompt : S.runKind === "replay" ? runReplay : runNext)(); return;
+	}
+}
+function runPrompt() {
+	const s = stage("run");
+	PROMPT_STEPS.forEach((step, i) => later(750 * (i + 1), () => {
+		if (S.phase !== "pipeline") return;
+		S.recorded.push(step); render();
+		if (i === PROMPT_STEPS.length - 1) later(700, () => {
+			s.state = "ok"; s.note = `${PROMPT_STEPS.length} steps recorded`; S.phase = "results";
+			S.promptResult = { verdict: "PASS", summary: "The Tomorrow tab opened in 0.8 s, the product list appeared with 12 products and the app stayed responsive. “Remind me” is shown on each product." };
+			render(); toast("Done — review the result, then save it as a macro if you like");
+		});
+	}));
+}
+function runReplay() {
+	const s = stage("run"); const m = S.replayMacro;
+	if (S.replayIndex >= m.steps.length) { s.state = "ok"; s.note = `${m.steps.length} steps in 9 s`; S.phase = "results"; m.last = "✓ just now"; render(); toast("Replay passed"); return; }
+	later(450, () => {
+		if (S.phase !== "pipeline") return;
+		if (S.scenario === "heal" && !S.healed && S.replayIndex === 2) { S.heal = "found"; s.state = "needs"; s.note = "Needs you"; render(); return; }
+		S.replayIndex += 1; render(); runReplay();
+	});
+}
+function runNext() {
+	const cases = runCases();
+	const s = stage("run");
+	if (S.runIndex >= cases.length) { s.state = "ok"; s.note = `${cases.length} done`; S.phase = "results"; render(); toast("Tests finished — please review the results"); return; }
+	S.tick = 0;
+	const id = cases[S.runIndex].id;
+	const iv = setInterval(() => {
+		if (S.phase !== "pipeline") { clearInterval(iv); return; }
+		if (S.approval) return;
+		S.tick += 1;
+		if (S.policy === "ask" && id === "SF-013" && S.tick === 2 && !S.approvedOnce) { S.approval = true; render(); return; }
+		if (S.tick >= 5) {
+			clearInterval(iv);
+			S.runResults[id] = RESULTS[id] ?? { verdict: "PASS", observed: "As expected.", shots: 1, secs: 60 };
+			S.runIndex += 1;
+			if (S.paused) { s.state = "ok"; s.note = "Paused"; S.phase = "results"; S.paused = false; render(); toast(`Paused after ${id}`); return; }
+			render(); later(250, runNext); return;
+		}
+		render();
+	}, 420);
+	S.runIv = iv;
+}
+
+// Scenarios ------------------------------------------------------------------------------------
+const ready = () => Object.assign(S, { casesRead: true, preparedSha: "a1b2c3d", builtSha: "a1b2c3d", installedSha: "a1b2c3d", simState: "booted", harness: "up" });
+const doneStages = () => [["code", "Get the code", "Already up to date · a1b2c3d"], ["build", "Build the app", "Already built for a1b2c3d"], ["device", "Get the QA simulator ready", "Ready"], ["check", "Final checks", "All good"], ["run", "Run 8 test(s)", "8 done"]].map(([key, label, note]) => ({ key, label, note, state: "ok" }));
+const SCENARIOS = {
+	home: { label: "Home", apply: () => { TAB = "home"; ready(); S.casesRead = false; } },
+	fresh: { label: "First time", apply: () => {} },
+	repeat: { label: "Second time (fast)", apply: () => { ready(); } },
+	vpn: { label: "VPN off", apply: () => { S.casesRead = true; S.scenario = "vpn"; startPipeline(); } },
+	buildfail: { label: "Build fails", apply: () => { Object.assign(S, { casesRead: true, preparedSha: "a1b2c3d", scenario: "buildfail" }); startPipeline(); } },
+	disk: { label: "Needs you: disk", apply: () => { ready(); S.scenario = "disk"; startPipeline(); } },
+	busy: { label: "Simulator busy", apply: () => { ready(); S.scenario = "busy"; startPipeline(); } },
+	columns: { label: "Unclear columns", apply: () => { S.casesRead = true; S.mappingFixed = false; } },
+	results: { label: "Results to review", apply: () => { ready(); S.sha = "a1b2c3d"; S.phase = "results"; S.stages = doneStages(); S.runResults = { ...RESULTS }; } },
+	promptform: { label: "Describe a check", apply: () => { ready(); Object.assign(S, { testsMode: "prompt", promptKind: "bug", promptTicket: "IOS-47031", jira: { key: "IOS-47031", ...JIRA["IOS-47031"] }, promptText: "Make sure the app no longer freezes on the Tomorrow tab of Flash Sale, and the product list shows." }); } },
+	promptresult: { label: "Check result → save macro", apply: () => { SCENARIOS.promptform.apply(); Object.assign(S, { runKind: "prompt", phase: "results", sha: "a1b2c3d", recorded: [...PROMPT_STEPS], promptResult: { verdict: "PASS", summary: "The Tomorrow tab opened in 0.8 s, the product list appeared with 12 products and the app stayed responsive. “Remind me” is shown on each product." } }); S.stages = doneStages(); S.stages[4].label = "Claude checks it"; S.stages[4].note = "6 steps recorded"; } },
+	replay: { label: "Replay a macro", apply: () => { ready(); Object.assign(S, { runKind: "replay", replayMacro: S.macros[1] }); startPipeline(); } },
+	heal: { label: "Replay needs repair", apply: () => { ready(); Object.assign(S, { scenario: "heal", runKind: "replay", replayMacro: S.macros[1] }); startPipeline(); } },
+	localdrift: { label: "Local repository changed", apply: () => { SCENARIOS.results.apply(); Object.assign(S, { mode: "local", localId: "poc", localDrift: true, sha: "1107d7f+e41a" }); S.stages[0].label = "Snapshot your local repository"; S.stages[0].note = "darshan/innovation/qa-mocker @ 1107d7f+e41a"; } },
+};
+function applyScenario(key) {
+	clearTimers(); S = fresh();
+	document.querySelectorAll("#scenarioButtons button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.key === key)));
+	if (key !== "home") TAB = "cases";
+	SCENARIOS[key].apply(); render();
+}
+
+// Events ---------------------------------------------------------------------------------------
+document.addEventListener("click", (e) => {
+	const t = e.target.closest("[data-act]");
+	if (!t) { if (S.comboOpen && !e.target.closest(".combo")) { S.comboOpen = false; render(); } return; }
+	const act = t.dataset.act; const id = t.dataset.id;
+	if (act === "close-overlay" && e.target.closest("[data-stop]") && !t.matches("button")) return;
+	if (t.matches("select, input") && act !== "branch-input") return;
+	switch (act) {
+		case "tab": TAB = t.dataset.tab; break;
+		case "goto-cases": TAB = "cases"; break;
+		case "start-cases": TAB = "cases"; if (S.phase !== "pipeline") { S.phase = "form"; S.testsMode = "cases"; } break;
+		case "start-prompt": TAB = "cases"; if (S.phase !== "pipeline") { S.phase = "form"; S.testsMode = "prompt"; } break;
+		case "start-replay": document.getElementById("homeMacros")?.scrollIntoView({ behavior: "smooth" }); return;
+		case "open-run": TAB = "cases"; applyScenario(t.dataset.scenario); return;
+		case "show-map": S.mapMacro = id; S.dialog = "macro-map"; break;
+		case "load-jira": {
+			const key = S.promptTicket.trim().toUpperCase(); S.jiraLoading = true; S.jiraError = ""; S.jira = null; render();
+			later(900, () => {
+				S.jiraLoading = false; const t = JIRA[key];
+				if (!t) S.jiraError = `<b>${esc(key)}</b> wasn't found, or you don't have access to it.`;
+				else if (t.type !== "Bug") S.jiraError = `<b>${esc(key)}</b> is ${t.type === "Improvement" ? "an" : "a"} <b>${esc(t.type)}</b>, not a Bug. Bug-fix checks only accept Bug tickets — use <b>Check a flow</b> for anything else.`;
+				else { S.jira = { key, ...t }; if (!S.promptText.trim()) S.promptText = `Make sure this no longer happens: ${t.title}.`; }
+				render();
+			});
+			return;
+		}
+		case "adv-toggle": S.advOpen = !t.parentElement.open; return;
+		case "branch-input": S.comboOpen = true; S.branchQuery = ""; render(); document.getElementById("branchInput")?.focus(); return;
+		case "pick-branch": S.branch = t.dataset.branch; S.comboOpen = false; break;
+		case "read": S.reading = true; render(); later(1400, () => { S.reading = false; S.casesRead = true; render(); toast("96 test cases read"); }); return;
+		case "change-source": S.casesRead = false; break;
+		case "sel-all": CASES.forEach((c) => S.selected.add(c.id)); break;
+		case "sel-none": S.selected.clear(); break;
+		case "sel-failed": S.selected = new Set(["SF-023", "SF-084"]); toast("Selected the 2 tests that failed last time"); break;
+		case "start": S.runKind = S.testsMode === "prompt" ? "prompt" : "cases"; startPipeline(); return;
+		case "replay": TAB = "cases"; S.dialog = null; clearTimers(); S.runKind = "replay"; S.replayMacro = S.macros.find((m) => m.id === id); S.healed = false; startPipeline(); return;
+		case "heal": S.heal = "looking"; render(); later(1300, () => { S.heal = "proposal"; render(); }); return;
+		case "approve-heal": { S.healed = true; S.heal = null; const st = stage("run"); st.state = "run"; st.note = ""; S.replayIndex += 1; toast("Fixed — 2 macros now use the new locator"); render(); runReplay(); return; }
+		case "p-agree": S.promptReview = { kind: "accepted" }; break;
+		case "p-change": S.showChange = true; break;
+		case "p-change-confirm": { const reason = document.getElementById("pvReason").value.trim(); if (reason.length < 8) { document.getElementById("pvErr").hidden = false; return; } S.promptReview = { kind: "overridden", to: document.getElementById("pvTo").value, reason }; break; }
+		case "save-macro": S.dialog = "save-macro"; break;
+		case "confirm-macro": { const name = document.getElementById("macroName").value.trim() || "Untitled macro"; S.macros.push({ id: "mc_01J9ZQ" + Math.random().toString(36).slice(2, 6).toUpperCase(), name, kind: document.getElementById("macroKind").value, last: "✓ just now", steps: [...S.recorded] }); S.savedMacro = true; S.dialog = null; toast(`Saved “${name}” — find it under Macros on the right`); break; }
+		case "retry": runStage(Number(t.dataset.i)); return;
+		case "free-disk": S.diskFixed = true; toast("Freed 22 GB"); runStage(Number(t.dataset.i)); return;
+		case "copy-log": toast("Build log copied"); break;
+		case "cancel-all": clearTimers(); S.phase = "form"; S.stages = []; S.approval = null; S.heal = null; toast("Stopped"); break;
+		case "edit": case "new-test": S.phase = "form"; S.stages = []; break;
+		case "approve": case "approve-always": S.approval = null; S.approvedOnce = true; toast(act === "approve" ? "Allowed once" : "Always allowed in this project"); break;
+		case "deny": S.approval = null; S.approvedOnce = true; toast("Not allowed — Claude continues without it"); break;
+		case "pause": S.paused = true; break;
+		case "skip-case": toast(`Skipped ${runCases()[S.runIndex]?.id ?? ""}`); S.tick = 99; break;
+		case "open-session": toast("Opens this test's Claude conversation in Sessions"); break;
+		case "show-sim": toast("Brings the Simulator app's QA window to the front"); break;
+		case "open-case": S.drawer = id; break;
+		case "quick-accept": S.human[id] = { kind: "accepted" }; break;
+		case "accept": S.human[id] = { kind: "accepted" }; S.drawer = null; break;
+		case "rerun-one": S.human[id] = { kind: "rerun" }; S.drawer = null; toast(`${id} will run again`); break;
+		case "override": { const reason = document.getElementById("ovReason").value.trim(); if (reason.length < 8) { document.getElementById("ovErr").hidden = false; document.getElementById("ovReason").focus(); return; } S.human[id] = { kind: "overridden", to: document.getElementById("ovTo").value, reason }; S.drawer = null; break; }
+		case "undo-signoff": delete S.human[id]; break;
+		case "accept-all-pass": Object.keys(S.runResults).forEach((x) => { if (verdictOf(x) === "PASS" && !S.human[x]) S.human[x] = { kind: "accepted" }; }); break;
+		case "rerun-failed": toast("Re-running the tests that didn't pass…"); later(1400, () => { S.flaky.add("SF-023"); delete S.human["SF-023"]; render(); toast("SF-023 passed on re-run → marked FLAKY · SF-084 still couldn't finish"); }); return;
+		case "run-again": S.localDrift = false; startPipeline(); return;
+		case "run-saved": { const x = SETUPS[Number(t.dataset.i)]; const env = { preparedSha: S.preparedSha, builtSha: S.builtSha, installedSha: S.installedSha, simState: S.simState, harness: S.harness, macros: S.macros }; TAB = "cases"; clearTimers(); S = fresh(); ready(); if (env.builtSha) Object.assign(S, env); Object.assign(S, { mode: x.mode, branch: x.branch, localId: x.localId, selected: new Set(x.selected) }); toast(`Loaded “${x.name}” — with the latest code`); startPipeline(); return; }
+		case "report": S.dialog = "report"; break;
+		case "export": toast("Downloaded qa-run-develop-a1b2c3d.md"); break;
+		case "publish": toast("Published to your personal Confluence page"); S.dialog = null; break;
+		case "save-setup": S.dialog = "save-setup"; break;
+		case "confirm-save": { const name = document.getElementById("setupName").value.trim() || "My setup"; SETUPS.push({ name, note: "saved just now", mode: S.mode, branch: S.branch, localId: S.localId, selected: [...S.selected] }); toast(`Saved “${name}” — find it under Saved setups`); S.dialog = null; break; }
+		case "close-overlay": S.drawer = null; S.dialog = null; break;
+		case "noop": toast("Not part of this prototype"); break;
+		default: return;
+	}
+	render();
+});
+function rerenderKeepingFocus(selector) {
+	const el = document.querySelector(selector); const pos = el?.selectionStart;
+	render();
+	const again = document.querySelector(selector); if (again) { again.focus(); if (pos != null) again.setSelectionRange(pos, pos); }
+}
+document.addEventListener("input", (e) => {
+	const act = e.target.dataset.act;
+	if (act === "branch-input") { S.branchQuery = e.target.value; S.comboOpen = true; rerenderKeepingFocus("#branchInput"); }
+	if (act === "filter") { S.filter = e.target.value; rerenderKeepingFocus('[data-act="filter"]'); }
+	if (act === "source") S.source = e.target.value;
+	if (act === "skip-reason") S.skipReason = e.target.value;
+	if (act === "prompt-text") { S.promptText = e.target.value; rerenderKeepingFocus('[data-act="prompt-text"]'); }
+	if (act === "prompt-ticket") { S.promptTicket = e.target.value; S.jira = null; S.jiraError = ""; rerenderKeepingFocus('[data-act="prompt-ticket"]'); }
+});
+document.addEventListener("change", (e) => {
+	const act = e.target.dataset.act;
+	if (act === "mode") { S.mode = e.target.value; render(); }
+	if (act === "tests-mode") { S.testsMode = e.target.value; render(); }
+	if (act === "prompt-kind") { S.promptKind = e.target.value; render(); }
+	if (act === "start-from") S.startFrom = e.target.value;
+	if (act === "macro-reviewed") document.getElementById("confirmMacro").disabled = !e.target.checked;
+	if (act === "local") { if (e.target.value === "__other") { toast("Would ask for a path — it must be a git working copy (contain a .git folder)"); e.target.value = S.localId; return; } S.localId = e.target.value; render(); }
+	if (act === "repo") { if (e.target.value === "__add") { toast("Would ask for a GitHub link"); e.target.value = S.repo; return; } S.repo = e.target.value; render(); }
+	if (act === "sel") { e.target.checked ? S.selected.add(e.target.dataset.id) : S.selected.delete(e.target.dataset.id); render(); }
+	if (act === "map") { S.mappingFixed = true; render(); toast("Got it — remembered for this page"); }
+	if (act === "mocks") S.mocks = e.target.value;
+	if (act === "policy") S.policy = e.target.value;
+	if (act === "skip-build") { S.skipBuild = e.target.checked; S.advOpen = true; render(); }
+});
+document.addEventListener("keydown", (e) => {
+	if (e.key === "Escape" && (S.drawer || S.dialog || S.comboOpen)) { S.drawer = null; S.dialog = null; S.comboOpen = false; render(); }
+	if (e.key === "Enter" && e.target.id === "branchInput") { const first = BRANCHES.find((b) => b.name.toLowerCase().includes(S.branchQuery.toLowerCase())); if (first) { S.branch = first.name; S.comboOpen = false; render(); } }
+});
+
+document.getElementById("scenarioButtons").innerHTML = Object.entries(SCENARIOS).map(([k, v]) => `<button data-key="${k}" aria-pressed="${k === "home"}">${v.label}</button>`).join("");
+document.getElementById("scenarioButtons").addEventListener("click", (e) => { const b = e.target.closest("button[data-key]"); if (b) { e.stopPropagation(); applyScenario(b.dataset.key); } });
+applyScenario("home");
+</script>
