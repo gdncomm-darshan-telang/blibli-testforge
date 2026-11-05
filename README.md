@@ -15,7 +15,7 @@ A native macOS app and local server that lets QA and developers test the Blibli 
 
 | Path | What |
 |---|---|
-| `plugin/` | `qa-flow-recorder` Claude Code plugin (this repo is also its marketplace) |
+| `plugin/` | `test-flow-recorder` Claude Code plugin (this repo is also its marketplace) |
 | `mac-app/` | Native SwiftUI Mac app (Swift package, `make-app.sh` builds and signs it) |
 | `server/` | Local Node server the app and plugin talk to (port 4545) |
 | `docs/` | Design, decisions, tutorials |
@@ -27,7 +27,7 @@ macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access
 
 ## Working in this repo
 
-Branches, commits, PRs and releases: see [CONTRIBUTING.md](CONTRIBUTING.md). Short version: `main` is always installable, work happens on `<name>/<type>/<topic>` branches, everything reaches `main` through a squash-merged PR.
+Branches, commits, PRs and releases: see [CONTRIBUTING.md](CONTRIBUTING.md). Short version: `master` is always installable, work happens on `<name>/<type>/<topic>` branches, everything reaches `master` through a squash-merged PR.
 
 ## Secrets
 
