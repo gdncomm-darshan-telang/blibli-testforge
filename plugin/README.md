@@ -10,7 +10,7 @@ app did.
 ## Install
 
 ```
-/plugin install qa-flow-recorder --marketplace gdncomm-darshan-telang/blibli-testforge
+/plugin install qa-flow-recorder --marketplace gdncomm/blibli-testforge
 ```
 
 Or from a local clone: `claude plugin marketplace add <path-to-blibli-testforge>`, then `claude plugin install qa-flow-recorder@testforge`.
