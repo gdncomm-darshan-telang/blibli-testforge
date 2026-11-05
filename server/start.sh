@@ -1,0 +1,47 @@
+#!/bin/bash
+# Installs deps on first run and starts the QA server (the TestForge Mac app runs this).
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Launched from the Mac app, a GUI process hands us a bare /usr/bin:/bin PATH — node, npm
+# and claude live in Homebrew / ~/.local/bin / nvm, none of which a GUI launch inherits.
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+if [ -s "$HOME/.nvm/nvm.sh" ] && ! command -v node >/dev/null 2>&1; then
+	# shellcheck disable=SC1091
+	. "$HOME/.nvm/nvm.sh"
+fi
+
+if [ ! -d node_modules ]; then
+	npm install --no-audit --no-fund
+fi
+
+# Per-machine settings and secrets (gitignored). See .env.local.example.
+if [ -f .env.local ]; then
+	set -a
+	# shellcheck disable=SC1091
+	. ./.env.local
+	set +a
+fi
+
+export NETWORKLENS_BUNDLE_ID="${NETWORKLENS_BUNDLE_ID:-com.blibli.mobile}"
+export QA_DASHBOARD_PORT="${QA_DASHBOARD_PORT:-4545}"
+# The iOS project under test (the folder holding the .xcworkspace). Set QA_PROJECT_DIR to your clone of the app repo,
+# for example ~/Projects/BlibliIOSApp/BlibliMobile-iOS. When this server still sits inside that repo
+# (tools/qa-dashboard), the sibling BlibliMobile-iOS folder is used.
+if [ -z "${QA_PROJECT_DIR:-}" ]; then
+	if [ -d "$SCRIPT_DIR/../../BlibliMobile-iOS" ]; then
+		QA_PROJECT_DIR="$(cd "$SCRIPT_DIR/../../BlibliMobile-iOS" && pwd)"
+	else
+		echo "QA_PROJECT_DIR is not set. Point it at BlibliMobile-iOS in your app clone (put it in .env.local)." >&2
+		exit 1
+	fi
+fi
+export QA_PROJECT_DIR
+export QA_UITEST_TARGET="${QA_UITEST_TARGET:-BlibliMobile_XCUITest}"
+# The driver was consolidated onto the PerfTest scheme (default test plan QADriver.xctestplan);
+# harness.py's own defaults (scheme QADriver, config Debug) do not exist in this project.
+export QA_SCHEME="${QA_SCHEME:-BlibliMobile-iOS-PerfTest}"
+export QA_CONFIGURATION="${QA_CONFIGURATION:-PerformanceTest}"
+
+exec node server.js

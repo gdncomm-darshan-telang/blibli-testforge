@@ -1,6 +1,6 @@
 # TestForge for Mac (v4: R2 shell, R3a Tests, Scan, R3b Results + Reports, R3c menu bar, R3d Simulator bridge, R3e Advanced)
 
-This is the native SwiftUI front end for the QA dashboard in `../qa-dashboard`. It starts the Node server itself, or connects to one that is already running, so you don't need a terminal. It reads all state from a single live stream, `/api/state/stream`. The design and phases are in `../qa-dashboard/docs/redesign-plan.md`.
+This is the native SwiftUI front end for the QA dashboard in `../server`. It starts the Node server itself, or connects to one that is already running, so you don't need a terminal. It reads all state from a single live stream, `/api/state/stream`. The design and phases are in `../server/docs/redesign-plan.md`.
 
 ## Build and open
 
