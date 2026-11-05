@@ -1,0 +1,70 @@
+import CoreGraphics
+
+/// Test case editing (D-166), result overrides (D-180) and explained replays (D-165).
+extension TestForgeConstants.Tests {
+		static let editSheetWidth: CGFloat = 560
+		static let editFieldMinHeight: CGFloat = 64
+		static let editNoticeCornerRadius: CGFloat = 8
+		static let overrideSheetHeight: CGFloat = 640
+		static let proofBadgeSpacing: CGFloat = 2
+		static let mediaViewerHeight: CGFloat = 460
+}
+
+extension TestForgeConstants.Accessibility {
+		static let testsExplainMenu = "QAW_Tests_ExplainMenu"
+		static let testsExplainedReplayButton = "QAW_Tests_ExplainedReplayButton"
+		static let testsRecordDemoButton = "QAW_Tests_RecordDemoButton"
+		static let testsWriteExplanationsButton = "QAW_Tests_WriteExplanationsButton"
+		static let testsWriteExplanationsConfirm = "QAW_Tests_WriteExplanationsConfirm"
+		static let testsEditButton = "QAW_Tests_EditButton"
+		static let testsEditedIcon = "QAW_Tests_EditedIcon"
+		static let testsEditNotice = "QAW_Tests_EditNotice"
+		static let testsEditNoticeText = "QAW_Tests_EditNotice_Text"
+		static let testsRevertEditButton = "QAW_Tests_RevertEditButton"
+		static let testsRevertEditConfirm = "QAW_Tests_RevertEditConfirm"
+		static let testsDocumentTextPrefix = "QAW_Tests_DocumentText_"
+		static let testsFieldPrefix = "QAW_Tests_Field_"
+		static let editSheet = "QAW_Tests_EditSheet"
+		static let editSheetTitle = "QAW_Tests_EditSheet_Title"
+		static let editSheetNote = "QAW_Tests_EditSheet_Note"
+		static let editSheetFieldPrefix = "QAW_Tests_EditSheet_Field_"
+		static let editSheetSave = "QAW_Tests_EditSheet_SaveButton"
+		static let editSheetCancel = "QAW_Tests_EditSheet_CancelButton"
+		static let testsOverrideButton = "QAW_Tests_OverrideResultButton"
+		static let testsProofBadgePrefix = "QAW_Tests_ProofBadge_"
+		static let testsMediaPanel = "QAW_Tests_Media"
+		static let testsMediaFileName = "QAW_Tests_Media_FileName"
+		static let testsMediaMessage = "QAW_Tests_Media_Message"
+		static let testsMediaPrevious = "QAW_Tests_Media_PreviousButton"
+		static let testsMediaNext = "QAW_Tests_Media_NextButton"
+		static let testsMediaAnnotate = "QAW_Tests_Media_AnnotateButton"
+		static let testsMediaOpen = "QAW_Tests_Media_OpenButton"
+		static let testsMediaReveal = "QAW_Tests_Media_RevealButton"
+		static let testsMediaCanvas = "QAW_Tests_Media_Canvas"
+		static let testsMediaAnnotationBar = "QAW_Tests_Media_AnnotationBar"
+		static let testsMediaToolPicker = "QAW_Tests_Media_ToolPicker"
+		static let testsMediaColorPicker = "QAW_Tests_Media_ColorPicker"
+		static let testsMediaUndo = "QAW_Tests_Media_UndoButton"
+		static let testsMediaClear = "QAW_Tests_Media_ClearButton"
+		static let testsMediaCancel = "QAW_Tests_Media_CancelButton"
+		static let testsMediaSaveCopy = "QAW_Tests_Media_SaveCopyButton"
+		static let testsMediaSave = "QAW_Tests_Media_SaveButton"
+		static let testsMediaSaveConfirm = "QAW_Tests_Media_SaveConfirm"
+		static let testsOverrideNote = "QAW_Tests_OverrideNote"
+		static let testsSetup = "QAW_Tests_Setup"
+		static let testsOverrideSheet = "QAW_Tests_OverrideSheet"
+		static let testsOverrideSheetTitle = "QAW_Tests_OverrideSheet_Title"
+		static let testsOverrideSheetCurrent = "QAW_Tests_OverrideSheet_Current"
+		static let testsOverrideSheetNote = "QAW_Tests_OverrideSheet_Note"
+		static let testsOverrideVerdictPicker = "QAW_Tests_OverrideSheet_VerdictPicker"
+		static let testsOverrideLeniencyPicker = "QAW_Tests_OverrideSheet_LeniencyPicker"
+		static let testsOverrideLeniencyNote = "QAW_Tests_OverrideSheet_LeniencyNote"
+		static let testsOverrideHistory = "QAW_Tests_OverrideSheet_History"
+		static let testsOverrideHistoryRow = "QAW_Tests_OverrideSheet_HistoryRow"
+		static let testsOverrideHistoryChange = "QAW_Tests_OverrideSheet_HistoryRow_Change"
+		static let testsOverrideHistoryDetail = "QAW_Tests_OverrideSheet_HistoryRow_Detail"
+		static let testsOverrideHistoryReason = "QAW_Tests_OverrideSheet_HistoryRow_Reason"
+		static let testsOverrideSheetCancel = "QAW_Tests_OverrideSheet_CancelButton"
+		static let testsOverrideSheetSave = "QAW_Tests_OverrideSheet_SaveButton"
+		static let testsOverrideSheetSaveRerun = "QAW_Tests_OverrideSheet_SaveRerunButton"
+}
