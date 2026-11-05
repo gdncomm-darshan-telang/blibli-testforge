@@ -40,12 +40,9 @@ Releasing is: bump the plugin and app versions, update the changelog, merge, tag
 
 ## Enforcement
 
-The private repo plan does not support GitHub branch protection or rulesets, so the rules above are not enforced by the server. Until that changes:
+The repo is public, so GitHub enforces these on `main`: changes only by PR, 1 approving review, code-owner review, resolved conversations, linear history, no force-push, no deletion. Repo admins can bypass (needed while the owner is the only reviewer), so do not. Merging is squash-only and merged branches are deleted automatically.
 
-- Enable the tracked hook once per clone: `git config core.hooksPath .githooks`. It refuses a push to `main` (override only for the initial bootstrap with `ALLOW_MAIN_PUSH=1`).
-- Reviewers: do not merge a PR that targets anything but `main`, has failing checks, or is not squashed.
-
-If the repo moves to a plan with branch protection, require: PR before merge, 1 approval, code-owner review, linear history (squash only), no force-push, no deletion of `main`.
+The tracked hook is a second guard on your machine. Enable it once per clone: `git config core.hooksPath .githooks`. It refuses a push to `main` (override only for a bootstrap with `ALLOW_MAIN_PUSH=1`).
 
 ## Secrets
 
