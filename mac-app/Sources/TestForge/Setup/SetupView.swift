@@ -26,19 +26,27 @@ struct SetupView<ViewModel: SetupPresenting>: View {
 		VStack(alignment: .leading, spacing: TestForgeConstants.Spacing.small) {
 			Text("Set up TestForge")
 				.font(.largeTitle.bold())
-			Text("TestForge tests your own copy of the iOS repo. Choose that folder and check this Mac has the tools below — you do this once.")
+			Text("TestForge tests your own copy of the iOS repo. Choose your TestForge checkout and that clone, and check this Mac has the tools below — you do this once.")
 				.foregroundStyle(.secondary)
 		}
 	}
 
 	@ViewBuilder
 	private var repoSection: some View {
-		GroupBox("1 · iOS repo") {
-			HStack(alignment: .firstTextBaseline) {
-				repoText
-					.frame(maxWidth: .infinity, alignment: .leading)
-				Button("Choose…", action: viewModel.chooseRepo)
-					.accessibilityIdentifier(SetupConstants.Accessibility.chooseRepoButton)
+		GroupBox("1 · TestForge checkout and iOS app clone") {
+			VStack(alignment: .leading, spacing: TestForgeConstants.Spacing.medium) {
+				HStack(alignment: .firstTextBaseline) {
+					repoText
+						.frame(maxWidth: .infinity, alignment: .leading)
+					Button("Choose…", action: viewModel.chooseRepo)
+						.accessibilityIdentifier(SetupConstants.Accessibility.chooseRepoButton)
+				}
+				HStack(alignment: .firstTextBaseline) {
+					appRepoText
+						.frame(maxWidth: .infinity, alignment: .leading)
+					Button("Choose…", action: viewModel.chooseAppRepo)
+						.accessibilityIdentifier(SetupConstants.Accessibility.chooseAppRepoButton)
+				}
 			}
 			.padding(TestForgeConstants.Spacing.medium)
 		}
@@ -48,14 +56,30 @@ struct SetupView<ViewModel: SetupPresenting>: View {
 	private var repoText: some View {
 		switch viewModel.repoState {
 			case .notChosen:
-				Text("Choose the folder you cloned BlibliIOSApp into (the one with tools/qa-dashboard).")
+				Text("Choose your blibli-testforge clone (the one with server/start.sh).")
 					.foregroundStyle(.secondary)
 			case .valid(let repo, _):
 				Label(repo.path, systemImage: "checkmark.circle.fill")
 					.foregroundStyle(.green)
 					.textSelection(.enabled)
 			case .invalid(let folder):
-				Label("\(folder.lastPathComponent) has no tools/qa-dashboard — choose the repo's top folder", systemImage: "xmark.octagon.fill")
+				Label("\(folder.lastPathComponent) has no server/start.sh — choose the checkout's top folder", systemImage: "xmark.octagon.fill")
+					.foregroundStyle(.red)
+		}
+	}
+
+	@ViewBuilder
+	private var appRepoText: some View {
+		switch viewModel.appRepoState {
+			case .notChosen:
+				Text("Choose your BlibliIOSApp clone (the one with BlibliMobile-iOS/*.xcworkspace).")
+					.foregroundStyle(.secondary)
+			case .valid(_, let project):
+				Label(project.path, systemImage: "checkmark.circle.fill")
+					.foregroundStyle(.green)
+					.textSelection(.enabled)
+			case .invalid(let folder):
+				Label("\(folder.lastPathComponent) has no BlibliMobile-iOS workspace — choose the app clone's top folder", systemImage: "xmark.octagon.fill")
 					.foregroundStyle(.red)
 		}
 	}
