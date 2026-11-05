@@ -1,0 +1,23 @@
+plugin/README.md
+  719bb087b0337a43 10-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "2ce683ecd73c85f39ba98ce80ae16921adfef7c1",
+  "prompts": {
+    "719bb087b0337a43": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a804252-b6dd-4e75-b41f-1c16d579e447",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 0,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    }
+  }
+}
