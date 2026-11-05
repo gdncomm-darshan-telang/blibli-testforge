@@ -4,9 +4,9 @@ argument-hint: "<test case page or steps> [tech doc]"
 allowed-tools: Bash, Read, Glob, Grep, AskUserQuestion, Skill
 ---
 
-Run the qa-flow-recorder workflow for: $ARGUMENTS
+Run the test-flow-recorder workflow for: $ARGUMENTS
 
-Invoke the `qa-flow-recorder` skill and follow it exactly. Do not improvise a shorter path — every
+Invoke the `test-flow-recorder` skill and follow it exactly. Do not improvise a shorter path — every
 gate in it exists because of a failure that some status flag elsewhere reported as fine.
 
 Two inputs are the minimum, and both are read-only for the whole run:

@@ -191,7 +191,7 @@ def main() -> int:
                                          f"({DEFAULT_PARENT_ID})")
     parser.add_argument("--media-dir", type=Path,
                         help="uploaded before the body is written, never after")
-    parser.add_argument("--version-message", default="qa-flow-recorder run")
+    parser.add_argument("--version-message", default="test-flow-recorder run")
     arguments = parser.parse_args()
 
     if not arguments.body_file.exists():

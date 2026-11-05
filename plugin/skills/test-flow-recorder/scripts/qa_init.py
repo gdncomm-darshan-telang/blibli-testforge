@@ -41,12 +41,12 @@ SHIM_NAME = "QADriverSession.swift"
 # Ordered: a taxonomy describes the app's own structure, so a tracked path is the better home and
 # is looked for first. The second is classify_module.py's own default, worth pointing at anyway --
 # see find_taxonomy.
-TAXONOMY_CANDIDATES = ("qa/taxonomy.json", ".claude/qa-flow-recorder/taxonomy.json")
+TAXONOMY_CANDIDATES = ("qa/taxonomy.json", ".claude/test-flow-recorder/taxonomy.json")
 
 
 def find_taxonomy(root: Path, explicit: Path | None) -> Path | None:
     """classify_module.py resolves a taxonomy through --taxonomy, then $QA_TAXONOMY, then a
-    *relative* .claude/qa-flow-recorder/taxonomy.json. That last one only resolves when the cwd
+    *relative* .claude/test-flow-recorder/taxonomy.json. That last one only resolves when the cwd
     happens to be the project root, and a project that gitignores .claude/ cannot keep its
     taxonomy there at all -- so an absolute QA_TAXONOMY is what makes one reachable from
     anywhere, and the only thing that finds one kept at a tracked path.

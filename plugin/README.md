@@ -1,4 +1,4 @@
-# qa-flow-recorder
+# test-flow-recorder
 
 Turns a manual QA test case into a verdict, run live against a booted app.
 
@@ -10,10 +10,10 @@ app did.
 ## Install
 
 ```
-/plugin install qa-flow-recorder --marketplace gdncomm/blibli-testforge
+/plugin install test-flow-recorder --marketplace gdncomm/blibli-testforge
 ```
 
-Or from a local clone: `claude plugin marketplace add <path-to-blibli-testforge>`, then `claude plugin install qa-flow-recorder@testforge`.
+Or from a local clone: `claude plugin marketplace add <path-to-blibli-testforge>`, then `claude plugin install test-flow-recorder@testforge`.
 
 ## What it needs
 
@@ -31,7 +31,7 @@ screen plane works without it; fixtures, mocking and the proof-of-mock gate do n
 
 ```
 /plugin marketplace add <path to this repo>
-/plugin install qa-flow-recorder
+/plugin install test-flow-recorder
 ```
 
 Then, once per project:
@@ -102,5 +102,5 @@ to work while pointing at the wrong place. So the Swift takes its bundle id, lau
 media root from `QADriverConfiguration`; the scripts require `--bundle-id` rather than defaulting;
 and the MCP servers report the bundle id as unset rather than guessing.
 
-Read `skills/qa-flow-recorder/usage.md` for what a run actually looks like, `SKILL.md` for the
+Read `skills/test-flow-recorder/usage.md` for what a run actually looks like, `SKILL.md` for the
 stages, and `contracts/` for the driver, evidence and healing contracts.

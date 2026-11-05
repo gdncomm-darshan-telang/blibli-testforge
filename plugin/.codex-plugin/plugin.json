@@ -1,5 +1,5 @@
 {
-  "name": "qa-flow-recorder",
+  "name": "test-flow-recorder",
   "version": "0.1.0",
   "description": "Runs a manual QA test case live against a booted simulator, driving both the screen and the network layer over MCP. Arms fixtures mutated from captured responses, proves they were served, drives the UI, reads real state, and adjudicates a disagreement as app-wrong, doc-wrong or undecided. Produces per-case screenshots, video, and a generated evidence report — not a compiled test file.",
   "author": { "name": "gdncomm" },

@@ -193,7 +193,7 @@ def main() -> int:
     parser.add_argument("--platform", required=True, choices=PLATFORMS)
     parser.add_argument("--platforms-dir", type=Path,
                         default=Path(__file__).parent.parent / "platforms",
-                        help="default: this plugin's own skills/qa-flow-recorder/platforms/")
+                        help="default: this plugin's own skills/test-flow-recorder/platforms/")
     parser.add_argument("--out-dir", type=Path, default=None,
                         help="default: ~/Documents/<project>-QA/adaptation-proposals/")
     parser.add_argument("--dry-run", action="store_true", help="print what would be written, write nothing")

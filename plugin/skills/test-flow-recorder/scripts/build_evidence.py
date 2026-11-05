@@ -841,7 +841,7 @@ def run_metadata_block(run: dict[str, Any], results: list[dict[str, Any]]) -> li
         "| | |",
         "| --- | --- |",
         f"| **Run by** | {md_cell(run['runner'])} |",
-        f"| **Driven by** | `qa-flow-recorder` skill (Claude Code) against a booted simulator |",
+        f"| **Driven by** | `test-flow-recorder` skill (Claude Code) against a booted simulator |",
         f"| **Run label** | {md_cell(run['label'])} |",
         f"| **Generated** | {datetime.now().strftime('%Y-%m-%d %H:%M')} |",
         f"| **Documentation posture** | `{md_cell(run.get('posture') or 'documented')}` |",

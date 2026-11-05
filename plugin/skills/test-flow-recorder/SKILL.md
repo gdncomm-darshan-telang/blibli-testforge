@@ -1,10 +1,10 @@
 ---
-name: qa-flow-recorder
+name: test-flow-recorder
 description: Runs a manual QA test case live against a booted device by driving both the screen and the network layer over MCP, from a code reference (screen/component/controller file) plus a test-case document. Also known as "qa-mocker". Use for "qa-mocker", "run this test case", "automate this manual test case", "drive the simulator", "QA automation for this flow", "automate this Confluence test case", "build a QA test from this test case", "regression test for X screen", "sanity test suite for X screen", "screenshot-verify this flow", "generate UI test coverage", "generate an e2e test", "write an XCUITest for X screen", "turn this test case into an automated test", "tap/scroll/assert on the simulator". Accepts pasted plain-English steps or a linked Confluence page as the test-case source. Drives screen actions through `mcp__qa-driver__*` (a persistent XCUITest harness, built once) and mock state through `mcp__networklens__*` (including importing existing `.networklens-pack.json` scenario packs), so a new test case costs a command plan rather than a rebuild. Produces per-step screenshots and a run report under a `Module/Submodule` folder in the project's UI test root. Never writes `session.json` itself — a rule a pack does not already cover is authored through `mcp__networklens__lens_mock_endpoint` and validated by `preflight.py`'s rule-schema gate before install. Also validates analytics trackers against the same trace a run reasons about (`scripts/extract_trackers.py` — see "Tracker validation" below), absorbed rather than delegated. Distinct from `networklens-setup` (installs/repairs the NetworkLens interceptor itself) — do not reach for this skill for that; route it there instead.
 argument-hint: [code-reference file path] [test-case: pasted steps or Confluence URL]
 ---
 
-# QA Flow Recorder — running a test case live, on any platform
+# Test Flow Recorder — running a test case live, on any platform
 
 Takes a code reference (the screen/component/controller a flow lives in) plus a test-case document
 (pasted plain-English steps, or a linked Confluence page) and **runs it**, live, against a booted
@@ -164,7 +164,7 @@ those four things itself, and it must be honest in the report about which ones i
 So Stage 2 starts by classifying the scope:
 
 ```bash
-python3 .claude/skills/qa-flow-recorder/scripts/scan_scope.py <scope folder>
+python3 .claude/skills/test-flow-recorder/scripts/scan_scope.py <scope folder>
 ```
 
 It reports a posture and the numbers behind it — reference-looking markdown in or beside the scope,
@@ -196,7 +196,7 @@ so the scan under-reports. Exercise the flow once with mocking **off**, then rea
 the authoritative list, and it is also what `capture_baseline.py` needs anyway:
 
 ```bash
-python3 .claude/skills/qa-flow-recorder/scripts/capture_baseline.py \
+python3 .claude/skills/test-flow-recorder/scripts/capture_baseline.py \
   --out-dir <run>/api-responses --manifest <run>/manifest.json --endpoint <each path from the trace> \
   --source-root <app source dir>
 ```
@@ -963,7 +963,7 @@ Report the access the page currently has instead.
 that gets remembered wrong:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/publish_evidence.py" \
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/publish_evidence.py" \
     --title "DEV_TESTING_EVIDENCE — <Feature>" \
     --body-file <run>/report/evidence.html \
     --media-dir <run>/report/media \
@@ -1181,7 +1181,7 @@ See `contracts/evidence.md`'s "Tracker trail" for the full field shape.
 ---
 
 
-| `qa-flow-recorder` action | Chains into | Why |
+| `test-flow-recorder` action | Chains into | Why |
 |---|---|---|
 | Retrofit an accessibility identifier on an *existing* view file | `swiftui-code-gen` if the file imports SwiftUI, else `swift-codegen` | Mirrors `require-codegen-skill.py`'s own `is_swiftui_view_file` classification — invoking the wrong one won't satisfy the gate anyway. |
 | Extend `QADriverKit` (a new command case, a new wait primitive), or append to a shared helper | `swift-codegen` | Imports `XCTest`, not `SwiftUI` — a non-SwiftUI edit under the hook's rules. `tdd`/`swift-unit-testing` target the Swift Testing framework and explicitly ban XCTest, so despite technically satisfying the hook's `ALLOWED_SKILLS` set, they are the wrong semantic choice here. |

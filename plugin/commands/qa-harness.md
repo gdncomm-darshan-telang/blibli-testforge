@@ -8,7 +8,7 @@ Manage the driver session. It is built once and then serves every flow until it 
 30 minutes; the bound resets on every command, so it never expires mid-flow.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/harness.py" ${ARGUMENTS:-status}
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/harness.py" ${ARGUMENTS:-status}
 ```
 
 Readiness is proven the only way that means anything: **a real command completes**. A process being

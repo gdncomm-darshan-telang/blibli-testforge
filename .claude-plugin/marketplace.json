@@ -3,12 +3,12 @@
   "name": "testforge",
   "owner": { "name": "gdncomm" },
   "metadata": {
-    "description": "TestForge marketplace: the qa-flow-recorder Claude Code plugin that drives the TestForge test runner",
+    "description": "TestForge marketplace: the test-flow-recorder Claude Code plugin that drives the TestForge test runner",
     "version": "0.1.0"
   },
   "plugins": [
     {
-      "name": "qa-flow-recorder",
+      "name": "test-flow-recorder",
       "source": "./plugin",
       "description": "Runs a manual QA test case live against a booted simulator, driving both the screen (a persistent XCUITest harness) and the network layer (mocked fixtures captured from real responses). Adjudicates whether the app or the test document is wrong, and emits an evidence report with per-case screenshots and video."
     }

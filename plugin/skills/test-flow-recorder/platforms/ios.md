@@ -554,7 +554,7 @@ hand:
 python3 <skill>/scripts/classify_module.py "<code-reference file path>" [--taxonomy <file.json>]
 ```
 
-Resolved in order: `--taxonomy`, `$QA_TAXONOMY`, `./.claude/qa-flow-recorder/taxonomy.json`.
+Resolved in order: `--taxonomy`, `$QA_TAXONOMY`, `./.claude/test-flow-recorder/taxonomy.json`.
 
 **With a taxonomy**, matching order — restated here so the logic is auditable without reading
 Python:

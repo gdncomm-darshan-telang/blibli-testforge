@@ -15,7 +15,7 @@ A native macOS app and local server that lets QA and developers test the Blibli 
 
 | Path | What |
 |---|---|
-| `plugin/` | `qa-flow-recorder` Claude Code plugin (this repo is also its marketplace) |
+| `plugin/` | `test-flow-recorder` Claude Code plugin (this repo is also its marketplace) |
 | `mac-app/` | Native SwiftUI Mac app (Swift package, `make-app.sh` builds and signs it) |
 | `server/` | Local Node server the app and plugin talk to (port 4545) |
 | `docs/` | Design, decisions, tutorials |

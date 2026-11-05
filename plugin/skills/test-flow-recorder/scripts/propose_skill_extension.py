@@ -146,7 +146,7 @@ def render_proposal(skill: SkillInfo) -> Proposal:
         "one row to `<UITestRoot>/<Module>/<Submodule>/accessibility-chain.md` under a "
         "`## Accessibility Identifier Chain` heading:\n\n"
         "`| Date | Identifier | Enum.Case | File:Line | Added by |`\n\n"
-        "Why: so the identifier map qa-flow-recorder needs builds up as this skill is used "
+        "Why: so the identifier map test-flow-recorder needs builds up as this skill is used "
         "normally, instead of only being reconstructed ad hoc during a QA run."
     )
     body = (

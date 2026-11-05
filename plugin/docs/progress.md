@@ -1,4 +1,4 @@
-# qa-flow-recorder — progress
+# test-flow-recorder — progress
 
 Current build state — what's actually built and working, not a proposal or a changelog narrative.
 See `plan.md` for the architecture map, standing invariants, and open items. No dates, timestamps,

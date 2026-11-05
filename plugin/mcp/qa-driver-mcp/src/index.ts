@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // MCP server exposing live UI-driving commands to a persistent XCUITest harness (QADriverKit's
 // QADriverRunner, subclassed by the host project's own test target). This is the "screen" half of
-// qa-flow-recorder's live execution model — the "data" half is NetworkLens's own MCP server,
+// test-flow-recorder's live execution model — the "data" half is NetworkLens's own MCP server,
 // unchanged and used alongside this one, not replaced by it.
 //
 // Every tool here is a thin wrapper around sendCommand(): enqueue a { kind, ...params } command,

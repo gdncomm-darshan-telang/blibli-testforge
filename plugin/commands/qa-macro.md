@@ -20,7 +20,7 @@ as `/qa-scan`.
 
 1. Resolve where the macro will live: run `scripts/classify_module.py "<code-reference file path>"`
    to get `<Module>/<Submodule>`, and join it under the flow's `<UITestRoot>` to get `--root`.
-2. `python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/macro_cli.py" record-start "<name>" --root <root> --narration "<what the operator described>"`
+2. `python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/macro_cli.py" record-start "<name>" --root <root> --narration "<what the operator described>"`
 3. Ask the operator to narrate the path, one step at a time, in plain English ("tap Settings", "tap
    Debug Menu", "tap Reset Cache", "confirm the alert").
 4. For each step: issue the real `mcp__qa-driver__*` call it describes, then immediately

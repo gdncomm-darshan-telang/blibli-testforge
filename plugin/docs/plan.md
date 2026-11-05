@@ -1,4 +1,4 @@
-# qa-flow-recorder — plan
+# test-flow-recorder — plan
 
 A Claude Code plugin that turns a written test-case sheet into an executed, evidence-backed QA run:
 drive the real app through a resident harness, mock the network, check the trace against what each

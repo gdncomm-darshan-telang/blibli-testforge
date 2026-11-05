@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Per-step content hash for the qa-flow-recorder tracking doc's Step -> Test Mapping table.
+"""Per-step content hash for the test-flow-recorder tracking doc's Step -> Test Mapping table.
 
 Hashes are computed per test-case step (not per document), so a future re-run can report which
 individual steps changed rather than treating the whole document as one blob. Whitespace is

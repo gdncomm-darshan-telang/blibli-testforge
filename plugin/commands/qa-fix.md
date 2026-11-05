@@ -6,7 +6,7 @@ allowed-tools: Bash, Read, Glob, Grep, AskUserQuestion, Skill
 
 Run the apply-fixes pass over: $ARGUMENTS
 
-Invoke the `qa-flow-recorder` skill and follow its **apply-fixes** section. This is a separate
+Invoke the `test-flow-recorder` skill and follow its **apply-fixes** section. This is a separate
 invocation over a **completed** run, never a shortcut inside one, and it never re-adjudicates a
 verdict — it applies what that run already proposed and lets the re-run decide whether the change
 was real.
@@ -14,7 +14,7 @@ was real.
 Start by reading the plan, because it may well say no:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/apply_fixes.py" \
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/apply_fixes.py" \
     --repo . plan <results>.json
 ```
 

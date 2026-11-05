@@ -1,4 +1,4 @@
-# QA Flow Recorder — what it does, and what it is worth
+# Test Flow Recorder — what it does, and what it is worth
 
 A QA test case is a paragraph of English. Turning it into a verdict normally costs a person twenty
 minutes: arrange the data, reach the screen, read the result, decide whether the app or the sheet is

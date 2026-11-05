@@ -33,7 +33,7 @@ Taxonomy file shape:
 Usage:
     classify_module.py "<path>" [--taxonomy <file.json>]
 
-Resolved in order: --taxonomy, $QA_TAXONOMY, ./.claude/qa-flow-recorder/taxonomy.json.
+Resolved in order: --taxonomy, $QA_TAXONOMY, ./.claude/test-flow-recorder/taxonomy.json.
 
 Output: "<Module>/<Submodule>", one line, on stdout.
 """
@@ -45,7 +45,7 @@ import pathlib
 import re
 import sys
 
-DEFAULT_TAXONOMY = pathlib.Path(".claude/qa-flow-recorder/taxonomy.json")
+DEFAULT_TAXONOMY = pathlib.Path(".claude/test-flow-recorder/taxonomy.json")
 EMPTY_TAXONOMY = {"rootMarker": "", "promoted": {}, "remaining": {}}
 
 

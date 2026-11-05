@@ -12,7 +12,7 @@ The harness must already be collecting — `/qa-harness ensure` — because scan
 itself; the person drives, and it watches.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/scan_mode.py" ${ARGUMENTS:---out scan-mode.json}
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/scan_mode.py" ${ARGUMENTS:---out scan-mode.json}
 ```
 
 It then reads commands on stdin until `stop`:

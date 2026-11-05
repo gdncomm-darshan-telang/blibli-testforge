@@ -68,7 +68,7 @@ Ask the batch, wait for answers, then proceed to Step 1.
 4. **Run it.**
 
    ```bash
-   python3 "${CLAUDE_PLUGIN_ROOT}/skills/qa-flow-recorder/scripts/qa_init.py" \
+   python3 "${CLAUDE_PLUGIN_ROOT}/skills/test-flow-recorder/scripts/qa_init.py" \
        --project <App>.xcodeproj --bundle-id <id> \
        [--ui-test-target <name>] [--package-path <dir> | --package-url <url> --package-ref <ref>]
    ```
