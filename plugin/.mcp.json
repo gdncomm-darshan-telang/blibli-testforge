@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "qa-driver": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/mcp/qa-driver-mcp/bin/start.sh",
+      "args": [],
+      "env": {
+        "QA_BUNDLE_ID": "${QA_BUNDLE_ID}",
+        "QA_MEDIA_ROOT": "${QA_MEDIA_ROOT}",
+        "QA_DEVICE_UDID": "${QA_DEVICE_UDID}"
+      }
+    }
+  }
+}

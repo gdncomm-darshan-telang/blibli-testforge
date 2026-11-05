@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "{CONFIG_UUID}",
+      "name" : "Default Configuration",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "QA_BUNDLE_ID",
+        "value" : "{BUNDLE_ID}"
+      },
+      {
+        "key" : "QA_MEDIA_ROOT",
+        "value" : "{MEDIA_ROOT}"
+      }
+    ],
+    "gatherCoverageData" : false
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "QADriverSession\/testLiveSession()"
+      ],
+      "target" : {
+        "containerPath" : "container:{CONTAINER}",
+        "identifier" : "{UITEST_UUID}",
+        "name" : "{UITEST_NAME}"
+      }
+    }
+  ],
+  "version" : 1
+}
