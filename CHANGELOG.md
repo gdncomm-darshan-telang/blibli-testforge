@@ -9,6 +9,9 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions follow [CONTRIB
 - `docs/README.md`: map of the documents.
 - Mac app test target with `RepoFolderResolver` tests (`swift test` in `mac-app/`).
 
+### Fixed
+- An app built inside the checkout skipped Setup and started the server without `QA_PROJECT_DIR`, so the server exited. Setup now shows until an iOS clone is chosen.
+
 ### Changed
 - Setup asks for two folders: this checkout and the iOS app clone (`QA_PROJECT_DIR`).
 - Settings › Project: the row is now "TestForge checkout" (it never changed the iOS clone).
