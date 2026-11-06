@@ -9,21 +9,29 @@ A native macOS app and local server that lets QA and developers test the Blibli 
 - **Measure** UI spacing and layers straight from the Simulator.
 - **Verify** a branch: finds the recorded cases that cover the files you changed and replays them before you raise a PR.
 
-> **Status:** repository scaffolding only. Code is moved in from `BlibliIOSApp-POC` (branch `darshan/innovation/qa-mocker`) in follow-up PRs.
+> **Status:** pre-release. Plugin, Mac app and server are all in this repo; run `./setup.sh` to get going. See [CHANGELOG.md](CHANGELOG.md).
 
-## Planned layout
+## Layout
 
 | Path | What |
 |---|---|
 | `plugin/` | `test-flow-recorder` Claude Code plugin (this repo is also its marketplace) |
 | `mac-app/` | Native SwiftUI Mac app (Swift package, `make-app.sh` builds and signs it) |
 | `server/` | Local Node server the app and plugin talk to (port 4545) |
-| `docs/` | Design, decisions, tutorials |
+| `docs/` | Map of the documents (the documents themselves sit in `server/docs/`) |
 | `setup.sh` | One-command setup for a new machine |
 
 ## Requirements
 
-macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access to the Blibli iOS repo (the app under test) and its private Swift packages. Details land with `setup.sh`.
+macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access to the Blibli iOS repo (the app under test) and its private Swift packages. `./setup.sh --check` tells you what is missing.
+
+## Getting started
+
+```bash
+./setup.sh     # check tools, install server deps, build the Mac app
+```
+
+Then follow the two next steps it prints: open the app, add the plugin.
 
 ## Working in this repo
 

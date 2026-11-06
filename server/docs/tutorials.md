@@ -432,3 +432,10 @@ Tour: QA step 14 "Re-check results after a new build".
 - Tip **Free up space** (anchor `buildCleanSection`, now on the "Free space and reset" header): each row's Delete…
   removes just that after asking; tick several for Reset selected; runner screenshots clear after runs.
 - Onboarding: no step names Clean or Reset; unchanged.
+
+### Revision R38 (2026-11-06) — Two-folder Setup
+
+- The Setup screen has no tip: it appears once, before the main window, so there is no anchor to attach to. Its own text explains both Choose… buttons.
+- Tip **Choose the code under test** (anchor `getReadyPrepareCode`) now says the TestForge checkout and the iOS clone are set at first launch and changed in Settings › Project.
+- Onboarding: Developer workflow step 1 says Prepare code works on the iOS clone chosen at setup.
+- Settings › Project row renamed "TestForge checkout" / "Change checkout…" (it changes the checkout, not the iOS clone). The iOS clone is not changeable there yet.

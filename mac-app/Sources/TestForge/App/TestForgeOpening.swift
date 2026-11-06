@@ -98,7 +98,7 @@ extension TestForgeOpening {
 				runPrompt: RunPromptService(client: dashboardClient),
 				git: GitControlService(client: dashboardClient)
 			),
-			isSetupNeeded: resolvedLocation == nil
+			isSetupNeeded: isSetupNeeded(for: resolvedLocation)
 		)
 		return TestForgeViewModel(services: services)
 	}
@@ -122,6 +122,11 @@ extension TestForgeOpening {
 			return nil
 		}
 		return ServerLocation(dashboardDirectory: directory, baseURL: baseURL, projectDirectory: projectDirectory)
+	}
+
+	/// Setup shows when there is no TestForge checkout, or no iOS clone to test: the server cannot start without `QA_PROJECT_DIR`.
+	func isSetupNeeded(for location: ServerLocation?) -> Bool {
+		location?.projectDirectory == nil
 	}
 
 	/// Only Setup shows while this is in use, so nothing starts from the app's own folder.

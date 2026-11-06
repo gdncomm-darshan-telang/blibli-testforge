@@ -211,7 +211,7 @@ extension OnboardingCatalog {
 				title: String(localized: "Point it at your code"),
 				place: String(localized: "Get ready · ⌘1 · Build · ⌘8"),
 				text: String(
-					localized: "Prepare code… picks your branch or working copy; Install for testing builds the QA copy and installs it with the test runner."
+					localized: "Prepare code… picks your branch or working copy in the iOS clone you chose at setup; Install for testing builds the QA copy and installs it with the test runner."
 				)
 			),
 			OnboardingFlowStep(
