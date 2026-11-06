@@ -29,7 +29,7 @@ struct TestForgeApp: App {
 				}
 		}
 		.commands {
-			TestForgeCommands(viewModel: viewModel, preferences: preferences)
+			TestForgeCommands(viewModel: viewModel, preferences: preferences, updates: viewModel.updateViewModel)
 		}
 		Window("Measure", id: TestForgeConstants.Window.measureWindowId) {
 			MeasureView(viewModel: viewModel.measureViewModel)

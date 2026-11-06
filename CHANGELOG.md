@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions follow [CONTRIB
 ## [Unreleased]
 
 ### Added
+- Mac app: Settings › Project › Updates and a TestForge menu item that pull the latest master, rebuild and reopen the app (D-217).
 - `build-app.command`: double-click to build the Mac app and open it.
 - `update-app.command`: double-click to pull the latest master, rebuild and open the app.
 - `setup.sh`: checks the tools, installs the server's dependencies, builds the Mac app, enables the git hook.

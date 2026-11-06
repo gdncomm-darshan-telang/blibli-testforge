@@ -4,6 +4,10 @@ protocol AppRelaunching {
 	/// Opens a fresh copy of this app, then quits this one, so the new repo folder is read at launch.
 	@MainActor
 	func relaunch()
+
+	/// Opens a fresh copy of the app at `url` (a rebuilt bundle), then quits this one.
+	@MainActor
+	func relaunch(at url: URL)
 }
 
 protocol ClaudeSignInOpening {
@@ -24,10 +28,15 @@ struct SetupSystem: AppRelaunching, ClaudeSignInOpening {
 
 	@MainActor
 	func relaunch() {
+		relaunch(at: Bundle.main.bundleURL)
+	}
+
+	@MainActor
+	func relaunch(at url: URL) {
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.createsNewApplicationInstance = true
 		let application = application
-		workspace.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, _ in
+		workspace.openApplication(at: url, configuration: configuration) { _, _ in
 			DispatchQueue.main.async {
 				application.terminate(nil)
 			}

@@ -11,6 +11,9 @@ enum SettingsTab: String, CaseIterable, Identifiable {
 
 	var id: String { rawValue }
 
+	/// The tab Settings opens on; the Update menu item sets it to `project`.
+	static let storageKey = "settingsTab"
+
 	var title: LocalizedStringResource {
 		switch self {
 			case .general:
@@ -55,9 +58,10 @@ struct SettingsView: View {
 	@ObservedObject var viewModel: TestForgeViewModel
 	@ObservedObject var appearance: AppearanceModel
 	@Environment(\.openWindow) private var openWindow
+	@AppStorage(SettingsTab.storageKey) private var selectedTab = SettingsTab.general.rawValue
 
 	var body: some View {
-		TabView {
+		TabView(selection: $selectedTab) {
 			ForEach(SettingsTab.allCases) { tab in
 				tabContent(for: tab)
 					.tabItem {
@@ -67,7 +71,7 @@ struct SettingsView: View {
 							Image(systemName: tab.symbolName)
 						}
 					}
-					.tag(tab)
+					.tag(tab.rawValue)
 					.accessibilityIdentifier(TestForgeConstants.Accessibility.settingsTabPrefix + tab.rawValue)
 			}
 		}
@@ -93,7 +97,11 @@ struct SettingsView: View {
 			case .general:
 				GeneralSettingsView(appearance: appearance, preferences: viewModel.preferences)
 			case .project:
-				ProjectSettingsView(dashboardDirectory: viewModel.dashboardDirectory, setup: viewModel.setupViewModel)
+				ProjectSettingsView(
+					dashboardDirectory: viewModel.dashboardDirectory,
+					setup: viewModel.setupViewModel,
+					updates: viewModel.updateViewModel
+				)
 			case .logins:
 				LoginsSettingsView(viewModel: viewModel.loginsViewModel)
 			case .tutorials:

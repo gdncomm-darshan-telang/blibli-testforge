@@ -4359,3 +4359,16 @@ the per-repo state folder `.claude/test-flow-recorder/` all use the new name. Th
 `/qa-*` commands keep their names. `lib/plugin-paths.js` now looks for the scripts in a `blibli-testforge` clone under
 `~/Projects` or in the installed plugin cache. The old local clone and marketplace `qa-flow-recorder-local` are
 retired: uninstall the old plugin, add the `testforge` marketplace, install the new one.
+
+## D-217 — Update TestForge from the app (2026-11-06)
+
+**Problem:** the checkout the app runs from only changed when someone ran git and `make-app.sh` by hand, so people
+stayed on old builds. **User decision:** add an Update option inside the app. **Decision:** `Update/` holds
+`GitAppUpdateService` (`git fetch origin master`, `git pull --ff-only origin master`, `mac-app/scripts/make-app.sh`),
+`UpdateViewModel` and the Settings › Project › Updates section. A quiet check runs when the server starts, and the
+TestForge menu item reads "Update TestForge… (n new)" when one is waiting; it opens Settings on Project and checks.
+Updating is allowed only on `master` with a clean tree and a fast-forward; any other state shows why and changes nothing.
+SSH runs with `BatchMode=yes` so a hidden passphrase prompt cannot hang the app. After a good build the app reopens the
+rebuilt bundle (`SetupSystem.relaunch(at:)`); if the pull works but the build fails, this copy keeps running and the
+last lines of the build log show under the button. Not done: updating from a release download (no signed releases yet),
+and blocking an update while a test run is in progress.
