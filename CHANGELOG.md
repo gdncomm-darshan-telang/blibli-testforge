@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions follow [CONTRIB
 ## [Unreleased]
 
 ### Added
+- `build-app.command`: double-click to build the Mac app and open it.
+- `update-app.command`: double-click to pull the latest master, rebuild and open the app.
 - `setup.sh`: checks the tools, installs the server's dependencies, builds the Mac app, enables the git hook.
 - `docs/README.md`: map of the documents.
 - Mac app test target with `RepoFolderResolver` tests (`swift test` in `mac-app/`).
