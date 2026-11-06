@@ -26,7 +26,7 @@ Rebase your branch on `master` before merging if it is behind. Do not merge `mas
 
 `[TestForge] <summary in the imperative>`, optionally with the area: `[TestForge] Mac app: add Free space row`. Keep the summary under about 70 characters; explain why in the body when it is not obvious.
 
-A non-obvious design choice gets a new `D-NNN` entry in `docs/decision.md` in the same PR (append, never rewrite old entries).
+A non-obvious design choice gets a new `D-NNN` entry in `server/docs/decision.md` in the same PR (append, never rewrite old entries).
 
 ## Releases
 

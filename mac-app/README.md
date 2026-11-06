@@ -18,7 +18,7 @@ open "build/TestForge.app"
 You can also open `Package.swift` in Xcode and run the `TestForge` scheme, or use `swift run` for a debug launch.
 
 - **Needs:** macOS 14 or later, the Swift 5.10+ toolchain from Xcode, and Node for the server. `start.sh` finds Node the same way the web launcher does.
-- **Location:** the app searches the folders above itself for `server/start.sh`. Installed anywhere else (from the DMG), it shows **Setup** first: choose your blibli-testforge clone and your BlibliIOSApp clone, fix any red tool check, **Continue** (the app reopens on them). Settings › Project › **Change repo…** switches the checkout later.
+- **Location:** the app searches the folders above itself for `server/start.sh`. Installed anywhere else (from the DMG), it shows **Setup** first: choose your blibli-testforge clone and your BlibliIOSApp clone, fix any red tool check, **Continue** (the app reopens on them). Settings › Project › **Change checkout…** switches the TestForge checkout later.
 
 ## What R2 does
 
