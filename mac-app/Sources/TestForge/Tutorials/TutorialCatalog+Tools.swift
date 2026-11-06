@@ -6,7 +6,8 @@ extension TutorialCatalog {
 			title: "Choose the code under test",
 			message: """
 				Prepare code picks a GitHub branch or a snapshot of your working copy and copies it to a separate QA folder; \
-				your own repo is only read. Get Ready then asks for a build when the app no longer matches it.
+				your own repo is only read. Get Ready then asks for a build when the app no longer matches it. \
+				Which folders TestForge uses (its own checkout and your iOS clone) is set once at first launch; change them in Settings › Project.
 				"""
 		),
 		TutorialStep(

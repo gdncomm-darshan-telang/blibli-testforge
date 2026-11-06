@@ -10,6 +10,11 @@ let package = Package(
 			name: "TestForge",
 			path: "Sources/TestForge",
 			resources: [.process("Resources")]
+		),
+		.testTarget(
+			name: "TestForgeTests",
+			dependencies: ["TestForge"],
+			path: "Tests/TestForgeTests"
 		)
 	]
 )

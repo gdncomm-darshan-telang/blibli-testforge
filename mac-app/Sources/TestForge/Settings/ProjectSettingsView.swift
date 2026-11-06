@@ -11,8 +11,8 @@ struct ProjectSettingsView<Setup: SetupPresenting>: View {
 					.textSelection(.enabled)
 					.foregroundStyle(.secondary)
 			}
-			LabeledContent("iOS repo") {
-				Button("Change repo…", action: setup.changeRepo)
+			LabeledContent("TestForge checkout") {
+				Button("Change checkout…", action: setup.changeRepo)
 					.accessibilityIdentifier(SetupConstants.Accessibility.changeRepoButton)
 			}
 			if let message = setup.message {
