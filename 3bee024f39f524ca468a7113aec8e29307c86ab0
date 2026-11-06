@@ -1,0 +1,23 @@
+CLAUDE.md
+  68e65dc1a0d1c09f 1-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "3bee024f39f524ca468a7113aec8e29307c86ab0",
+  "prompts": {
+    "68e65dc1a0d1c09f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d5a479b-3e27-4930-9cb0-fa71540513a5",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 51,
+      "total_deletions": 0,
+      "accepted_lines": 51,
+      "overriden_lines": 0
+    }
+  }
+}
