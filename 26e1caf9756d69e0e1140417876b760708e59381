@@ -1,0 +1,71 @@
+mac-app/Sources/TestForge/Docs/DocsSectionView.swift
+  b4ee79b94d3df648 1-133,135-156,158-226
+mac-app/Tests/TestForgeTests/MarkdownParserTests.swift
+  b4ee79b94d3df648 1-83
+mac-app/Sources/TestForge/Views/Markdown/MarkdownConstants.swift
+  b4ee79b94d3df648 8-10
+mac-app/Sources/TestForge/Docs/DocsListView.swift
+  b4ee79b94d3df648 1-97
+mac-app/Sources/TestForge/Views/Markdown/MarkdownParser.swift
+  b4ee79b94d3df648 3-5,8,10-14,21-22,33,38-39,93-119,130,136-149,166-172,224-260
+mac-app/Sources/TestForge/Docs/DocsPageView.swift
+  b4ee79b94d3df648 1-6,10-21,23-87,89-121,123-150
+mac-app/Sources/TestForge/Tutorials/TutorialCatalog+Docs.swift
+  b4ee79b94d3df648 1-40
+mac-app/Sources/TestForge/Views/TestForgeView.swift
+  b4ee79b94d3df648 128-129
+mac-app/Sources/TestForge/App/TestForgeCommands.swift
+  b4ee79b94d3df648 62-74,80-87
+mac-app/Sources/TestForge/Docs/DocsWindowArranger.swift
+  b4ee79b94d3df648 1-41
+mac-app/Sources/TestForge/Tutorials/TutorialAnchor.swift
+  b4ee79b94d3df648 61-66
+mac-app/Sources/TestForge/Tutorials/TutorialAnchorModifier.swift
+  b4ee79b94d3df648 21-30
+mac-app/Sources/TestForge/App/TestForgeViewModel+Docs.swift
+  b4ee79b94d3df648 1-86
+CHANGELOG.md
+  b4ee79b94d3df648 8-10
+mac-app/Sources/TestForge/Views/Markdown/MarkdownBlock.swift
+  b4ee79b94d3df648 14-36,40,52-102
+mac-app/Sources/TestForge/App/TestForgeViewModel.swift
+  b4ee79b94d3df648 123-127,235,248
+mac-app/Sources/TestForge/Docs/DocsModels.swift
+  b4ee79b94d3df648 1-130
+mac-app/Sources/TestForge/Views/Markdown/MarkdownView.swift
+  b4ee79b94d3df648 4,8-13,15-45,52-70
+mac-app/Sources/TestForge/Docs/DocsCatalog.swift
+  b4ee79b94d3df648 1-161
+mac-app/Tests/TestForgeTests/DocsTests.swift
+  b4ee79b94d3df648 1-339
+mac-app/Sources/TestForge/Docs/DocsConstants.swift
+  b4ee79b94d3df648 1-73
+mac-app/Sources/TestForge/Docs/DocsViewModel.swift
+  b4ee79b94d3df648 1-441
+mac-app/Sources/TestForge/App/TestForgeApp.swift
+  b4ee79b94d3df648 38-41
+mac-app/Sources/TestForge/Onboarding/OnboardingCatalog+Roles.swift
+  b4ee79b94d3df648 211-220,341-350
+mac-app/Sources/TestForge/Views/Markdown/MarkdownBlockView.swift
+  b4ee79b94d3df648 14-15,38,40,42,44-45,47,52-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "26e1caf9756d69e0e1140417876b760708e59381",
+  "prompts": {
+    "b4ee79b94d3df648": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d9b207d3-415d-4f4d-a05e-18864626f99e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 2216,
+      "total_deletions": 44,
+      "accepted_lines": 2202,
+      "overriden_lines": 4
+    }
+  }
+}
