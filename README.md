@@ -33,6 +33,8 @@ macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access
 
 Then follow the two next steps it prints: open the app, add the plugin.
 
+To rebuild the app later, double-click `build-app.command` in Finder (it runs `mac-app/scripts/make-app.sh`).
+
 ## Working in this repo
 
 Branches, commits, PRs and releases: see [CONTRIBUTING.md](CONTRIBUTING.md). Short version: `master` is always installable, work happens on `<name>/<type>/<topic>` branches, everything reaches `master` through a squash-merged PR.
