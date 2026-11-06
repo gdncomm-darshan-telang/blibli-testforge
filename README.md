@@ -33,7 +33,7 @@ macOS with Xcode and the iOS Simulator, Node.js, ffmpeg, and Claude Code. Access
 
 Then follow the two next steps it prints: open the app, add the plugin.
 
-To rebuild the app later, double-click `build-app.command` in Finder (it runs `mac-app/scripts/make-app.sh`).
+To rebuild the app later, double-click `build-app.command` in Finder (it runs `mac-app/scripts/make-app.sh`, then opens the app).
 
 ## Working in this repo
 
