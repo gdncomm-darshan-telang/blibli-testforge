@@ -198,6 +198,16 @@ extension OnboardingCatalog {
 					"""),
 				needsClaude: false
 			),
+			OnboardingFlowStep(
+				number: 23,
+				title: String(localized: "Update TestForge itself"),
+				place: String(localized: "TestForge menu › Check for Updates… · Settings › Project"),
+				text: String(localized: """
+					Pulls the latest master of your TestForge checkout, rebuilds the app and reopens it. The menu item says \
+					when an update is waiting. It stops, and says why, on another branch or with local changes.
+					"""),
+				needsClaude: false
+			),
 		]
 	)
 
@@ -306,6 +316,16 @@ extension OnboardingCatalog {
 				title: String(localized: "Work beside the Simulator"),
 				place: String(localized: "Tests › Test list · Live steps"),
 				text: String(localized: "In Split View, hide the sidebar, the test list (⌥⌘L) and Live steps so the Simulator gets the room."),
+				needsClaude: false
+			),
+			OnboardingFlowStep(
+				number: 15,
+				title: String(localized: "Update TestForge itself"),
+				place: String(localized: "TestForge menu › Check for Updates… · Settings › Project"),
+				text: String(localized: """
+					Pulls the latest master of your TestForge checkout, rebuilds the app and reopens it. The menu item says \
+					when an update is waiting. It stops, and says why, on another branch or with local changes.
+					"""),
 				needsClaude: false
 			),
 		]

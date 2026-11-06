@@ -4,7 +4,9 @@ import SwiftUI
 struct TestForgeCommands: Commands {
 	@ObservedObject var viewModel: TestForgeViewModel
 	@ObservedObject var preferences: TestForgePreferences
+	@ObservedObject var updates: UpdateViewModel
 	@Environment(\.openWindow) private var openWindow
+	@Environment(\.openSettings) private var openSettings
 
 	var body: some Commands {
 		CommandGroup(after: .sidebar) {
@@ -47,6 +49,15 @@ struct TestForgeCommands: Commands {
 				openWindow(id: TestForgeConstants.Window.measureWindowId)
 			}
 			.keyboardShortcut("m", modifiers: [.command, .option])
+		}
+		CommandGroup(after: .appInfo) {
+			Button(updates.menuTitle) {
+				UserDefaults.standard.set(SettingsTab.project.rawValue, forKey: SettingsTab.storageKey)
+				openSettings()
+				updates.check()
+			}
+			.disabled(viewModel.isSetupNeeded || updates.activity.isBusy)
+			.accessibilityIdentifier(UpdateConstants.Accessibility.menuItem)
 		}
 		CommandGroup(before: .help) {
 			Button("Welcome to TestForge") {

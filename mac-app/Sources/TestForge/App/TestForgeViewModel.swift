@@ -41,6 +41,7 @@ struct TestForgeServices {
 	let demoLibrary: DemoLibraryListing
 	let networkConsole: NetworkConsoleServing
 	let setup: SetupDependencies
+	let update: AppUpdating
 	let claudeSession: ClaudeSessionServing
 	let usageTap: UsageTapInstalling
 	let remoteControl: RemoteControlActing
@@ -117,6 +118,7 @@ final class TestForgeViewModel: ObservableObject {
 	let resetViewModel: ResetSectionViewModel
 	let testBatchViewModel: TestBatchViewModel
 	let setupViewModel: SetupViewModel
+	let updateViewModel: UpdateViewModel
 	let claudeViewModel: ClaudeSectionViewModel
 	private(set) lazy var usageBarViewModel = UsageBarViewModel(store: services.store, service: services.usageTap)
 	private(set) lazy var remoteControlViewModel = RemoteControlViewModel(
@@ -226,6 +228,7 @@ final class TestForgeViewModel: ObservableObject {
 		resetViewModel = Self.makeResetViewModel(services: services, buildViewModel: buildSectionViewModel)
 		claudeViewModel = ClaudeSectionViewModel(service: services.claudeSession)
 		setupViewModel = Self.makeSetupViewModel(services: services)
+		updateViewModel = UpdateViewModel(service: services.update, system: services.setup.system)
 		consoleViewModel = ConsoleSectionViewModel(log: services.consoleLog) { desktop.copy(text: $0) }
 		observeConnection()
 		observeTermination()
@@ -253,6 +256,7 @@ final class TestForgeViewModel: ObservableObject {
 			return
 		}
 		services.logTailer.start()
+		updateViewModel.checkQuietly()
 		runServerTask { supervisor in
 			await supervisor.start()
 		}

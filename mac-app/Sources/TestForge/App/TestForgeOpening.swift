@@ -88,6 +88,10 @@ extension TestForgeOpening {
 			demoLibrary: DemoLibraryService(client: dashboardClient),
 			networkConsole: NetworkConsoleService(client: dashboardClient),
 			setup: makeSetupDependencies(runner: commandRunner, desktop: desktop),
+			update: GitAppUpdateService(
+				runner: commandRunner,
+				repo: resolvedLocation.flatMap { RepoFolderResolver().repoRoot(containing: $0.dashboardDirectory) }
+			),
 			claudeSession: ClaudeSessionService(client: dashboardClient, baseURL: location.baseURL, session: .shared),
 			usageTap: UsageTapService(client: dashboardClient),
 			remoteControl: RemoteControlService(client: dashboardClient),

@@ -439,3 +439,11 @@ Tour: QA step 14 "Re-check results after a new build".
 - Tip **Choose the code under test** (anchor `getReadyPrepareCode`) now says the TestForge checkout and the iOS clone are set at first launch and changed in Settings › Project.
 - Onboarding: Developer workflow step 1 says Prepare code works on the iOS clone chosen at setup.
 - Settings › Project row renamed "TestForge checkout" / "Change checkout…" (it changes the checkout, not the iOS clone). The iOS clone is not changeable there yet.
+
+### Revision R39 (D-217, 2026-11-06) — Update TestForge from the app
+
+- No tip: the Updates section lives in the Settings window (Settings › Project), which has no tutorial anchors, like
+  Setup. The section's own text explains each state, and a failure shows under the buttons.
+- Onboarding: QA workflow step 23 and developer workflow step 15 "Update TestForge itself" name the menu item
+  (TestForge menu › Check for Updates…, which reads "Update TestForge… (n new)" when one is waiting) and Settings › Project.
+- Settings opens on the last tab used; the menu item opens it on Project and starts a check.

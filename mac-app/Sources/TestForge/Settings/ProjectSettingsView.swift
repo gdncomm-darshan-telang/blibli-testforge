@@ -1,8 +1,9 @@
 import SwiftUI
 
-struct ProjectSettingsView<Setup: SetupPresenting>: View {
+struct ProjectSettingsView<Setup: SetupPresenting, Updates: UpdatePresenting>: View {
 	let dashboardDirectory: URL
 	@ObservedObject var setup: Setup
+	@ObservedObject var updates: Updates
 
 	var body: some View {
 		Form {
@@ -23,6 +24,7 @@ struct ProjectSettingsView<Setup: SetupPresenting>: View {
 			Text("TestForge reopens with the checkout you choose. QA_DASHBOARD_DIR and QA_PROJECT_DIR, when set, still win.")
 				.font(.callout)
 				.foregroundStyle(.secondary)
+			UpdateSettingsSectionView(viewModel: updates)
 		}
 		.formStyle(.grouped)
 		.accessibilityIdentifier(TestForgeConstants.Accessibility.settingsProject)
