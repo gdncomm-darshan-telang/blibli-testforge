@@ -447,3 +447,14 @@ Tour: QA step 14 "Re-check results after a new build".
 - Onboarding: QA workflow step 23 and developer workflow step 15 "Update TestForge itself" name the menu item
   (TestForge menu › Check for Updates…, which reads "Update TestForge… (n new)" when one is waiting) and Settings › Project.
 - Settings opens on the last tab used; the menu item opens it on Project and starts a check.
+
+### Revision R41 (D-220, 2026-11-07) — Free replay or Claude, and one Replay button
+
+- New tip **Free replay or Claude** (anchor `testsReplayStatus`, the status line above Last run): what each icon
+  means (⚡ green free replay, ⚡ orange not confirmed, ⚠ red needs repair, ✨ needs Claude) and that a Claude pass
+  shows UNCONFIRMED until a replay of its saved recording passes.
+- Tip **Replay recorded steps** (anchor `testsReplayButton`) now says a click replays and press-and-hold lists
+  Replay with explanations, Record demo video and Write explanations with Claude; Replay is off when the recording
+  can't run without Claude. The separate **Replays anyone can follow** tip is gone with the Explain menu it pointed at.
+- Onboarding QA workflow step 2 names the ⚡ and ✨ icons and says a Claude pass counts once its recording replays;
+  step 10 is now "Test Cases › hold Replay". Developer workflow "Replay what you touched" says the ⚡ cases replay free.
