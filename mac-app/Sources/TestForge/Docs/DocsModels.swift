@@ -3,11 +3,8 @@ import Foundation
 
 /// Where a document in the Docs list comes from (D-218).
 enum DocsGroup: String, CaseIterable, Identifiable {
-	/// The app's own guides: the usage guide and the feature list.
+	/// The checkout's README, the usage guide and the feature list.
 	case guides
-
-	/// Other Markdown in the TestForge checkout: READMEs, design notes, decisions.
-	case project
 
 	/// Files someone dropped or opened; kept between launches.
 	case yours
@@ -18,8 +15,6 @@ enum DocsGroup: String, CaseIterable, Identifiable {
 		switch self {
 			case .guides:
 				return String(localized: "TestForge guides")
-			case .project:
-				return String(localized: "Project docs")
 			case .yours:
 				return String(localized: "Your files")
 		}

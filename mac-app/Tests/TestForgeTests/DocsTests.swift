@@ -60,29 +60,30 @@ private func waitUntil(_ condition: @MainActor () -> Bool) async {
 }
 
 struct DocsCatalogTests {
-	@Test func guidesComeFirstThenProjectDocsWithTitles() throws {
+	@Test func onlyTheReadmeAndGuidesAreListedWithTitles() throws {
 		let sandbox = try Sandbox()
 		defer { sandbox.remove() }
 		try sandbox.write("docs/Features.md", "# TestForge Mac app: features\n")
 		try sandbox.write("docs/Usage-guide.md", "Intro line\n# TestForge Mac app: usage guide\n")
-		try sandbox.write("README.md", "# TestForge\n")
-		try sandbox.write("server/docs/decision.md", "No heading here\n")
-		try sandbox.write("server/docs/prototype/skip.md", "# Not listed\n")
+		try sandbox.write("README.md", "No heading here\n")
+		try sandbox.write("docs/README.md", "# Not listed\n")
+		try sandbox.write("server/docs/decision.md", "# Not listed\n")
 
 		let entries = DocsCatalog().entries(inRepo: sandbox.root)
 
-		#expect(entries.map(\.subtitle) == ["docs/Usage-guide.md", "docs/Features.md", "README.md", "server/docs/decision.md"])
-		#expect(entries.map(\.group) == [.guides, .guides, .project, .project])
-		#expect(entries[0].title == "TestForge Mac app: usage guide")
-		#expect(entries[3].title == "decision")
+		#expect(entries.map(\.subtitle) == ["README.md", "docs/Usage-guide.md", "docs/Features.md"])
+		#expect(entries.allSatisfy { $0.group == .guides })
+		#expect(entries[0].title == "README")
+		#expect(entries[1].title == "TestForge Mac app: usage guide")
 	}
 
 	@Test func missingGuidesAreLeftOut() throws {
 		let sandbox = try Sandbox()
 		defer { sandbox.remove() }
-		try sandbox.write("docs/README.md", "# TestForge docs\n")
+		try sandbox.write("docs/Features.md", "# Features\n")
+		try sandbox.write("server/docs/usage.md", "# Not listed\n")
 		let entries = DocsCatalog().entries(inRepo: sandbox.root)
-		#expect(entries.map(\.subtitle) == ["docs/README.md"])
+		#expect(entries.map(\.subtitle) == ["docs/Features.md"])
 	}
 
 	@Test func aDroppedFolderAddsItsMarkdownAndSkipsTheRest() throws {

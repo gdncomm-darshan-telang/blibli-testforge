@@ -4393,3 +4393,12 @@ another local file opens in its app; a web link opens in the browser. The parser
 item continuation lines, dropped HTML comments and relative image paths; `bulletList`/`orderedList` became one
 `list` case. Not done: search inside a page, rendering inline HTML, editing, watching files for changes (Reload
 re-reads), and bundling the guides into the app for an install without a checkout.
+
+## D-219 — Docs list shows only the README and the two guides (2026-11-06)
+
+**Problem:** the D-218 **Project docs** group listed every `.md` in `docs/` and `server/docs/` (design notes,
+decision log, old walkthroughs), a long list most readers do not need, with out-of-date docs next to current ones.
+**User decision:** list only `README.md`, the feature list and the usage guide by default. **Decision:** the
+**Project docs** group is removed; **TestForge guides** lists `README.md`, `docs/Usage-guide.md` and
+`docs/Features.md`, in that order, and **Your files** is unchanged. Other repo docs are still reachable: a link in a
+listed doc opens them in place, and they can be dropped or opened like any file.

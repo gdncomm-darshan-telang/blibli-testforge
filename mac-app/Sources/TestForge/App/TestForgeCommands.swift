@@ -79,12 +79,12 @@ struct TestForgeCommands: Commands {
 			.disabled(viewModel.isSetupNeeded)
 			Button("TestForge Usage Guide") {
 				openWindow(id: TestForgeConstants.Window.mainWindowId)
-				viewModel.showDoc(atRepoPath: DocsCatalog.guidePaths[0])
+				viewModel.showDoc(atRepoPath: DocsCatalog.usageGuidePath)
 			}
 			.disabled(viewModel.isSetupNeeded)
 			Button("TestForge Features") {
 				openWindow(id: TestForgeConstants.Window.mainWindowId)
-				viewModel.showDoc(atRepoPath: DocsCatalog.guidePaths[1])
+				viewModel.showDoc(atRepoPath: DocsCatalog.featuresPath)
 			}
 			.disabled(viewModel.isSetupNeeded)
 		}

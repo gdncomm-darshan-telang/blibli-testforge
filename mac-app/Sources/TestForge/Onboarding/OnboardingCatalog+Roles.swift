@@ -343,7 +343,7 @@ extension OnboardingCatalog {
 				title: String(localized: "Read docs beside your code"),
 				place: String(localized: "Docs · ⌘D · File › Open Markdown… (⌘O)"),
 				text: String(localized: """
-					The TestForge guides and design notes, plus any Markdown you drop in, such as a README or a spec. \
+					The README, the usage guide and the feature list, plus any Markdown you drop in, such as a README or a spec. \
 					Links between docs open in place; open one in its own window on half the screen next to Xcode.
 					"""),
 				needsClaude: false

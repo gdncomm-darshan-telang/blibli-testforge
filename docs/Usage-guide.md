@@ -655,7 +655,7 @@ If it says "Claude usage — nothing reported yet", click **Connect Claude Code 
 
 **Steps**
 
-1. Press ⌘D, or Help › TestForge Usage Guide (or TestForge Features). The list on the left has **TestForge guides**, **Project docs** and **Your files**. The usage guide opens the first time.
+1. Press ⌘D, or Help › TestForge Usage Guide (or TestForge Features). The list on the left has **TestForge guides** (the README, this guide and the feature list) and **Your files**. Other repo docs open from their links. The usage guide opens the first time.
 2. Click a document to read it. Type in **Filter documents** to find one by title or path.
 3. To read your own files, drop Markdown files or a folder onto the page, or press **Open…** (⌘O, also File › Open Markdown…). They join **Your files** and the first one opens.
 4. Click a link: `#heading` links scroll on the page; a link to another `.md` opens it here at its heading, and **Back** returns. Web links open in your browser; other files open in their own app.

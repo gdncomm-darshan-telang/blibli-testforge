@@ -107,7 +107,7 @@ final class DocsViewModel: ObservableObject {
 		return false
 	}
 
-	/// Lists the guides, the checkout's docs and your files, then opens the last page read (or the usage guide).
+	/// Lists the README, the guides and your files, then opens the last page read (or the usage guide).
 	func load() {
 		listTask?.cancel()
 		isListing = true
@@ -321,7 +321,7 @@ final class DocsViewModel: ObservableObject {
 			return
 		}
 		let savedPath = dependencies.defaults.string(forKey: DocsConstants.Storage.selectedPath)
-		if let entry = listed.first(where: { $0.id == savedPath }) ?? listed.first(where: { $0.group == .guides }) ?? listed.first {
+		if let entry = listed.first(where: { $0.id == savedPath }) ?? listed.first(where: { $0.subtitle == DocsCatalog.usageGuidePath }) ?? listed.first {
 			open(entry)
 		}
 	}

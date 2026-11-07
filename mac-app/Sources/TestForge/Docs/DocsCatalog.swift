@@ -1,14 +1,14 @@
 import Foundation
 
-/// The documents the Docs section lists from the TestForge checkout (D-218). Files that are missing are left out,
-/// so a checkout without the guides still shows its other docs.
+/// The documents the Docs section lists from the TestForge checkout (D-218, D-219). Only the README and the two
+/// guides are listed; other repo docs open in place from their links. Files that are missing are left out.
 struct DocsCatalog {
-	/// The app's own guides, in the order they are listed.
-	static let guidePaths = ["docs/Usage-guide.md", "docs/Features.md"]
+	static let readmePath = "README.md"
+	static let usageGuidePath = "docs/Usage-guide.md"
+	static let featuresPath = "docs/Features.md"
 
-	/// Top-level docs, then every Markdown file directly inside these folders.
-	static let projectPaths = ["README.md", "docs/README.md", "CONTRIBUTING.md", "CHANGELOG.md", "mac-app/README.md", "plugin/README.md"]
-	static let projectFolders = ["docs", "server/docs"]
+	/// The listed guides, in the order they are listed.
+	static let guidePaths = [readmePath, usageGuidePath, featuresPath]
 
 	private let fileManager: FileManager
 
@@ -17,18 +17,7 @@ struct DocsCatalog {
 	}
 
 	func entries(inRepo root: URL) -> [DocsEntry] {
-		let guides = Self.guidePaths.compactMap { entry(at: $0, in: root, group: .guides) }
-		var seen = Set(guides.map(\.id))
-		var project: [DocsEntry] = []
-		for path in Self.projectPaths + folderFiles(in: root) {
-			guard let entry = entry(at: path, in: root, group: .project),
-				seen.insert(entry.id).inserted
-			else {
-				continue
-			}
-			project.append(entry)
-		}
-		return guides + project
+		Self.guidePaths.compactMap { entry(at: $0, in: root, group: .guides) }
 	}
 
 	/// A file's title: its first `# ` heading, else its name without the extension.
@@ -63,16 +52,6 @@ struct DocsCatalog {
 			return nil
 		}
 		return DocsEntry(url: url, title: title(of: url), subtitle: path, group: group)
-	}
-
-	private func folderFiles(in root: URL) -> [String] {
-		Self.projectFolders.flatMap { folder -> [String] in
-			let names = (try? fileManager.contentsOfDirectory(atPath: root.appendingPathComponent(folder).path)) ?? []
-			return names
-				.filter { $0.lowercased().hasSuffix(".md") }
-				.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
-				.map { "\(folder)/\($0)" }
-		}
 	}
 }
 

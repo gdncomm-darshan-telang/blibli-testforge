@@ -182,7 +182,7 @@ Read the app's guides and any Markdown file in place.
 
 | Feature | What it does |
 |---|---|
-| Document list | **TestForge guides** (this feature list and the usage guide), **Project docs** (the checkout's READMEs and `docs/`, `server/docs/`), and **Your files**. Filter by title or path. |
+| Document list | **TestForge guides** (the checkout's `README.md`, the usage guide and this feature list) and **Your files**. Other repo docs open in place from their links. Filter by title or path. |
 | Drop or open files | Drop Markdown files or folders anywhere on the page, or Open… (⌘O). They stay under Your files between launches; remove one from its right-click menu. |
 | Reader | Headings, nested and task lists, tables, code, quotes and images next to the file. |
 | Links | A `#heading` link scrolls there; a link to another `.md` opens it in place, with Back; web links open in the browser. |

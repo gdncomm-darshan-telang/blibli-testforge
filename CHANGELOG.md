@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions follow [CONTRIB
 ## [Unreleased]
 
 ### Added
-- Mac app: Docs section (⌘D) that lists the usage guide, the feature list and the repo's docs and shows them in place, with Half and Full layouts, an outline, links that open in place, and a separate Docs window for the left or right half of the screen or full screen. Drop Markdown files or folders, or use File › Open Markdown… (⌘O), to read your own (D-218).
+- Mac app: Docs section (⌘D) that lists the README, the usage guide and the feature list and shows them in place, with Half and Full layouts, an outline, links that open in place, and a separate Docs window for the left or right half of the screen or full screen. Drop Markdown files or folders, or use File › Open Markdown… (⌘O), to read your own (D-218).
 - Mac app: Help › TestForge Usage Guide and TestForge Features open those docs in the app.
 - Mac app: the Markdown viewer reads nested and task lists, heading links, and images next to the document.
 - `docs/Features.md`: every feature of the Mac app, by sidebar section, with who it is for and whether it needs Claude.
