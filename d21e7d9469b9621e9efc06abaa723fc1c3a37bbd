@@ -1,0 +1,39 @@
+mac-app/Sources/TestForge/App/TestForgeCommands.swift
+  b4ee79b94d3df648 82,87
+mac-app/Tests/TestForgeTests/DocsTests.swift
+  b4ee79b94d3df648 63,68-70,74-77,83-84,86
+mac-app/Sources/TestForge/Docs/DocsModels.swift
+  b4ee79b94d3df648 6
+docs/Usage-guide.md
+  b4ee79b94d3df648 658
+docs/Features.md
+  b4ee79b94d3df648 185
+mac-app/Sources/TestForge/Docs/DocsCatalog.swift
+  b4ee79b94d3df648 3-4,6-8,10-11,20
+CHANGELOG.md
+  b4ee79b94d3df648 8
+mac-app/Sources/TestForge/Docs/DocsViewModel.swift
+  b4ee79b94d3df648 110,324
+mac-app/Sources/TestForge/Onboarding/OnboardingCatalog+Roles.swift
+  b4ee79b94d3df648 346
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "d21e7d9469b9621e9efc06abaa723fc1c3a37bbd",
+  "prompts": {
+    "b4ee79b94d3df648": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d9b207d3-415d-4f4d-a05e-18864626f99e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 28,
+      "total_deletions": 53,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    }
+  }
+}
