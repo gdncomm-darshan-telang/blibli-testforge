@@ -1,0 +1,41 @@
+mac-app/Sources/TestForge/Tests/TestCaseReplayBadge.swift
+  b4ee79b94d3df648 1-23,29-91
+server/lib/run-batch.js
+  b4ee79b94d3df648 98-103
+server/server.js
+  b4ee79b94d3df648 1399,1401,2029-2030,2061-2063,2066,2079-2081,2747-2749
+mac-app/Sources/TestForge/Tests/TestCaseDetailView.swift
+  b4ee79b94d3df648 19,81,124,130-135
+mac-app/Sources/TestForge/Tutorials/TutorialAnchor.swift
+  b4ee79b94d3df648 46
+mac-app/Tests/TestForgeTests/ReplayStatusTests.swift
+  b4ee79b94d3df648 1-71
+mac-app/Sources/TestForge/State/TestCaseReplayStatus.swift
+  b4ee79b94d3df648 1-46
+mac-app/Sources/TestForge/Tests/TestCaseReplayMenuView.swift
+  b4ee79b94d3df648 3-4,13,16,22-25,27,44-50,73-75,77-78,80-83,88-89
+mac-app/Sources/TestForge/Tests/TestsSectionConstants.swift
+  b4ee79b94d3df648 14-18
+server/lib/replay-status.js
+  b4ee79b94d3df648 1-14,17-25,27-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "70dc6b941914faa717c151e0ad080e83b35c8089",
+  "prompts": {
+    "b4ee79b94d3df648": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d9b207d3-415d-4f4d-a05e-18864626f99e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Darshan <darshan.telang@gdn-commerce.com>",
+      "messages": [],
+      "total_additions": 328,
+      "total_deletions": 18,
+      "accepted_lines": 320,
+      "overriden_lines": 3
+    }
+  }
+}
